@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.bukkit.entity.EntityType;
+
 public class GetNMSName {
 	
 	/**
@@ -16,6 +18,9 @@ public class GetNMSName {
 	 */
 
 	private static HashMap<Integer, String> nameMap = new HashMap<Integer, String>();
+
+	public static Map<EntityType, String> names = new HashMap<EntityType, String>();
+	public static Map<String, EntityType> namesReverse = new HashMap<String, EntityType>();
 
 	public static void getNames() {
 		try {
@@ -36,7 +41,9 @@ public class GetNMSName {
 								String name = (String) o;
 								Method trans = Arrays.stream(locale.getClass().getMethods()).filter(m -> m.getReturnType().equals(String.class)).filter(m -> m.getParameterCount() == 1).filter(m -> m.getParameters()[0].getType().equals(String.class)).collect(Collectors.toList()).get(0);
 								String friendlyName = (String) trans.invoke(locale, "entity." + name + ".name");
-								nameMap.put(id, friendlyName);
+								if (!(friendlyName.startsWith("entity.") && friendlyName.endsWith(".name"))) {
+									nameMap.put(id, friendlyName);
+								}
 							}
 						} catch (IndexOutOfBoundsException e) {}
 					}
@@ -52,14 +59,39 @@ public class GetNMSName {
 							int id = (Integer) oid;
 							Method trans = Arrays.stream(locale.getClass().getMethods()).filter(m -> m.getReturnType().equals(String.class)).filter(m -> m.getParameterCount() == 1).filter(m -> m.getParameters()[0].getType().equals(String.class)).collect(Collectors.toList()).get(0);
 							String friendlyName = (String) trans.invoke(locale, "entity." + name + ".name");
-							nameMap.put(id, friendlyName);
+							if (!(friendlyName.startsWith("entity.") && friendlyName.endsWith(".name"))) {
+								nameMap.put(id, friendlyName);
+							}
 						}
 					}
 				}
 			}
+			updateNames();
 		} catch (ClassNotFoundException | IllegalArgumentException | SecurityException | NoSuchFieldException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private static void updateNames() {
+		Map<EntityType, String> nm = new HashMap<EntityType, String>();
+		Map<String, EntityType> nrm = new HashMap<String, EntityType>();
+		for (int id : nameMap.keySet()) {
+			@SuppressWarnings("deprecation")
+			EntityType et = EntityType.fromId(id);
+			String name = nameMap.get(id);
+			nm.put(et, name);
+			nrm.put(name, et);
+		}
+		names = nm;
+		namesReverse = nrm;
+	}
+	
+	public static Map<EntityType, String> getNameMap() {
+		return names;
+	}
+	
+	public static Map<String, EntityType> getNameMapReverse() {
+		return namesReverse;
 	}
 
 }

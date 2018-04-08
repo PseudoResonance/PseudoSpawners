@@ -157,8 +157,8 @@ public class ConfigOptions implements ConfigOption {
 			Message.sendConsoleMessage(ChatColor.RED + "Invalid color in config for Color!");
 		}
 		try {
-			Map<EntityType, String> nm = new HashMap<EntityType, String>();
-			Map<String, EntityType> nrm = new HashMap<String, EntityType>();
+			Map<EntityType, String> nm = GetNMSName.getNameMap();
+			Map<String, EntityType> nrm = GetNMSName.getNameMapReverse();
 			Set<String> l = PseudoSpawners.plugin.getConfig().getConfigurationSection("Names").getKeys(false);
 			for (String s : l) {
 				String u = s.toUpperCase();
