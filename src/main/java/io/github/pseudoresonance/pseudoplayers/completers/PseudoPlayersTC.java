@@ -15,13 +15,13 @@ public class PseudoPlayersTC implements TabCompleter {
 		List<String> possible = new ArrayList<String>();
 		if (args.length == 1) {
 			possible.add("help");
-			if (sender.hasPermission("pseudospawners.reload")) {
+			if (sender.hasPermission("pseudoplayers.reload")) {
 				possible.add("reload");
 			}
-			if (sender.hasPermission("pseudospawners.reset")) {
+			if (sender.hasPermission("pseudoplayers.reset")) {
 				possible.add("reset");
 			}
-			if (sender.hasPermission("pseudospawners.view")) {
+			if (sender.hasPermission("pseudoplayers.view")) {
 				possible.add("player");
 			}
 			if (args[0].equalsIgnoreCase("")) {
@@ -37,7 +37,7 @@ public class PseudoPlayersTC implements TabCompleter {
 			}
 		} else if (args.length == 2) {
 			if (args[0].equalsIgnoreCase("player")) {
-				if (sender.hasPermission("pseudospawners.view.others")) {
+				if (sender.hasPermission("pseudoplayers.view.others")) {
 					possible.addAll(PlayerDataController.getNames());
 				}
 			}
