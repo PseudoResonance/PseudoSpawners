@@ -14,7 +14,7 @@ public class PlayerTC implements TabCompleter {
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		List<String> possible = new ArrayList<String>();
 		if (args.length == 1) {
-			if (sender.hasPermission("pseudospawners.view.others")) {
+			if (sender.hasPermission("pseudoplayers.view.others")) {
 				possible.addAll(PlayerDataController.getNames());
 			}
 			if (args[0].equalsIgnoreCase("")) {
