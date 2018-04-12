@@ -1,10 +1,10 @@
 name: PseudoPlayers
 author: PseudoResonance
 main: io.github.pseudoresonance.pseudoplayers.PseudoPlayers
-version: 0.0.4
+version: 0.0.5
 description: Stores and gets data about players
 depend: [PseudoAPI]
-softdepend: [VoxelSniper]
+softdepend: [Vault,VoxelSniper]
 commands:
   pseudoplayers:
     description: PseudoPlayers Menu
@@ -26,9 +26,66 @@ permissions:
     default: true
     children:
       pseudoplayers.view: true
+  pseudoplayers.view.uuid:
+    description: Allows the player to see the uuid of a player
+    default: op
+    children:
+      pseudoplayers.view: true
+  pseudoplayers.view.location:
+    description: Allows the player to see where a player last logged off
+    default: op
+    children:
+      pseudoplayers.view: true
   pseudoplayers.view.logoutlocation:
     description: Allows the player to see where a player last logged off
     default: op
+    children:
+      pseudoplayers.view: true
+  pseudoplayers.view.playtime:
+    description: Allows the player to see how long a player has played
+    default: op
+    children:
+      pseudoplayers.view: true
+  pseudoplayers.view.balance:
+    description: Allows the player to see the balance of a player
+    default: op
+    children:
+      pseudoplayers.view: true
+  pseudoplayers.view.ip:
+    description: Allows the player to see the IP of a player
+    default: op
+    children:
+      pseudoplayers.view: true
+  pseudoplayers.view.gamemode:
+    description: Allows the player to see the gamemode of a player
+    default: op
+    children:
+      pseudoplayers.view: true
+  pseudoplayers.view.health:
+    description: Allows the player to see the health of a player
+    default: op
+    children:
+      pseudoplayers.view: true
+  pseudoplayers.view.hunger:
+    description: Allows the player to see the hunger of a player
+    default: op
+    children:
+      pseudoplayers.view: true
+  pseudoplayers.view.op:
+    description: Allows the player to see if a player is opped
+    default: op
+    children:
+      pseudoplayers.view: true
+  pseudoplayers.view.god:
+    description: Allows the player to see if a player is in god mode
+    default: op
+    children:
+      pseudoplayers.view: true
+  pseudoplayers.view.fly:
+    description: Allows the player to see if a player is in fly mode
+    default: op
+    children:
+      pseudoplayers.view: true
   pseudoplayers.*:
     description: Gives the user all PseudoPlayers permissions
     default: op
@@ -36,4 +93,15 @@ permissions:
       pseudoplayers.reset: true
       pseudoplayers.reload: true
       pseudoplayers.view.others: true
+      pseudoplayers.view.uuid: true
+      pseudoplayers.view.location: true
       pseudoplayers.view.logoutlocation: true
+      pseudoplayers.view.playtime: true
+      pseudoplayers.view.balance: true
+      pseudoplayers.view.ip: true
+      pseudoplayers.view.gamemode: true
+      pseudoplayers.view.health: true
+      pseudoplayers.view.hunger: true
+      pseudoplayers.view.op: true
+      pseudoplayers.view.god: true
+      pseudoplayers.view.fly: true

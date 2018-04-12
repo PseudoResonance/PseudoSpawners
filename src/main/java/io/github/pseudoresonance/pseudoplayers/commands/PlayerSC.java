@@ -1,5 +1,6 @@
 package io.github.pseudoresonance.pseudoplayers.commands;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -8,8 +9,14 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,11 +32,13 @@ import io.github.pseudoresonance.pseudoapi.bukkit.SubCommandExecutor;
 import io.github.pseudoresonance.pseudoapi.bukkit.Utils;
 import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.PlayerDataController;
+import io.github.pseudoresonance.pseudoplayers.PseudoPlayers;
 
 public class PlayerSC implements SubCommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player) || sender.hasPermission("pseudoplayers.view")) {
+			boolean online = false;
 			String uuid;
 			String name;
 			if (args.length == 0) {
@@ -63,8 +72,12 @@ public class PlayerSC implements SubCommandExecutor {
 					return false;
 				}
 			}
+			if (Bukkit.getServer().getPlayer(name) != null)
+				online = true;
 			List<Object> messages = new ArrayList<Object>();
 			messages.add(ConfigOptions.border + "===---" + ConfigOptions.title + name + " Details" + ConfigOptions.border + "---===");
+			if (sender.hasPermission("pseudoplayers.view.uuid"))
+				messages.add(ConfigOptions.description + "UUID: " + ConfigOptions.command + uuid);
 			Object firstJoinO = PlayerDataController.getPlayerSetting(uuid, "firstjoin");
 			String firstJoinTime = "";
 			if (firstJoinO != null) {
@@ -106,9 +119,22 @@ public class PlayerSC implements SubCommandExecutor {
 				}
 			} else
 				joinLeaveTime = "Unknown";
-			if (Bukkit.getServer().getPlayer(name) != null)
+			if (online) {
 				messages.add(ConfigOptions.description + "Online " + joinLeaveTime);
-			else {
+				if (sender.hasPermission("pseudoplayers.view.location")) {
+					Location loc = Bukkit.getServer().getPlayer(name).getLocation();
+					String world = loc.getWorld().getName();
+					String x = String.valueOf(loc.getBlockX());
+					String y = String.valueOf(loc.getBlockY());
+					String z = String.valueOf(loc.getBlockZ());
+					String tpCommand = io.github.pseudoresonance.pseudoplayers.ConfigOptions.teleportationFormat;
+					tpCommand = tpCommand.replaceAll("\\{world\\}", world);
+					tpCommand = tpCommand.replaceAll("\\{x\\}", x);
+					tpCommand = tpCommand.replaceAll("\\{y\\}", y);
+					tpCommand = tpCommand.replaceAll("\\{z\\}", z);
+					messages.add(new ElementBuilder(new ChatElement(ConfigOptions.description + "Location: "), new ChatElement(ConfigOptions.command + "World: " + world + " X: " + x + " Y: " + y + " Z: " + z, new ChatComponent(ComponentType.SUGGEST_COMMAND, "/" + tpCommand), new ChatComponent(ComponentType.SHOW_TEXT, ConfigOptions.description + "Click to teleport to coordinates"))).build());
+				}
+			} else {
 				messages.add(ConfigOptions.description + "Offline " + joinLeaveTime);
 				if (sender.hasPermission("pseudoplayers.view.logoutlocation")) {
 					Object logoutLocationO = PlayerDataController.getPlayerSetting(uuid, "logoutLocation");
@@ -127,6 +153,90 @@ public class PlayerSC implements SubCommandExecutor {
 						}
 					}
 				}
+			}
+			if (sender.hasPermission("pseudoplayers.view.playtime")) {
+				Object playtimeO = PlayerDataController.getPlayerSetting(uuid, "playtime");
+				if (playtimeO instanceof BigInteger || playtimeO instanceof Long) {
+					long playtime = 0;
+					if (playtimeO instanceof BigInteger)
+						playtime = ((BigInteger) playtimeO).longValueExact();
+					else
+						playtime = (Long) playtimeO;
+					if (online) {
+						Object o = PlayerDataController.getPlayerSetting(uuid, "lastjoinleave");
+						if (o instanceof Timestamp) {
+							long joinLeave = ((Timestamp) o).getTime();
+							long diff = System.currentTimeMillis() - joinLeave;
+							playtime += diff;
+						}
+					}
+					messages.add(ConfigOptions.description + "Playtime: " + ConfigOptions.command + Utils.millisToHumanFormat(playtime));
+				}
+			}
+			if (PseudoPlayers.economy != null) {
+				if (sender.hasPermission("pseudoplayers.view.balance")) {
+					OfflinePlayer op = Bukkit.getServer().getOfflinePlayer(UUID.fromString(uuid));
+					double bal = 0.0;
+					try {
+						bal = PseudoPlayers.economy.getBalance(op);
+					} catch (RuntimeException e) {}
+					messages.add(ConfigOptions.description + "Balance: " + ConfigOptions.command + PseudoPlayers.economy.format(bal));
+				}
+			}
+			if (sender.hasPermission("pseudoplayers.view.ip")) {
+				Object ipO = PlayerDataController.getPlayerSetting(uuid, "ip");
+				if (ipO instanceof String) {
+					String ip = (String) ipO;
+					if (!ip.equals("0.0.0.0")) {
+						messages.add(ConfigOptions.description + "IP: " + ConfigOptions.command + ip);
+					}
+				}
+			}
+			if (sender.hasPermission("pseudoplayers.view.gamemode") && online) {
+				GameMode gm = Bukkit.getServer().getPlayer(name).getGameMode();
+				String mode = gm.toString();
+				messages.add(ConfigOptions.description + "Gamemode: " + ConfigOptions.command + mode.substring(0, 1).toUpperCase() + mode.substring(1).toLowerCase());
+			}
+			if (sender.hasPermission("pseudoplayers.view.health") && online) {
+				AttributeInstance max = Bukkit.getServer().getPlayer(name).getAttribute(Attribute.GENERIC_MAX_HEALTH);
+				int health = (int) Math.round(Bukkit.getServer().getPlayer(name).getHealth());
+				messages.add(ConfigOptions.description + "Health: " + ConfigOptions.command + health + "/" + ((int) Math.round(max.getValue())));
+			}
+			if (sender.hasPermission("pseudoplayers.view.hunger") && online) {
+				int food = Bukkit.getServer().getPlayer(name).getFoodLevel();
+				float sat = Bukkit.getServer().getPlayer(name).getSaturation();;
+				messages.add(ConfigOptions.description + "Hunger: " + ConfigOptions.command + food + "/20 (+" + sat + " saturation)");
+			}
+			if (sender.hasPermission("pseudoplayers.view.op") && online) {
+				boolean op = Bukkit.getServer().getPlayer(name).isOp();
+				if (op)
+					messages.add(ConfigOptions.description + "OP: " + ConfigOptions.command + "True");
+				else
+					messages.add(ConfigOptions.description + "OP: " + ConfigOptions.command + "False");
+			}
+			if (Bukkit.getPluginManager().getPlugin("PseudoUtils").isEnabled()) {
+				if (sender.hasPermission("pseudoplayers.view.god")) {
+					Object godO = PlayerDataController.getPlayerSetting(uuid, "godMode");
+					if (godO instanceof Boolean) {
+						boolean god = (Boolean) godO;
+						if (god)
+							messages.add(ConfigOptions.description + "God Mode: " + ConfigOptions.command + "Enabled");
+						else
+							messages.add(ConfigOptions.description + "God Mode: " + ConfigOptions.command + "Disabled");
+					}
+				}
+			}
+			if (sender.hasPermission("pseudoplayers.view.fly") && online) {
+				boolean fly = Bukkit.getServer().getPlayer(name).getAllowFlight();
+				boolean isFly = Bukkit.getServer().getPlayer(name).isFlying();
+				if (fly) {
+					if (isFly)
+						messages.add(ConfigOptions.description + "Fly Mode: " + ConfigOptions.command + "Enabled (Flying)");
+					else
+						messages.add(ConfigOptions.description + "Fly Mode: " + ConfigOptions.command + "Enabled");
+				}
+				else
+					messages.add(ConfigOptions.description + "Fly Mode: " + ConfigOptions.command + "Disabled");
 			}
 			Message.sendMessage(sender, messages);
 			return true;

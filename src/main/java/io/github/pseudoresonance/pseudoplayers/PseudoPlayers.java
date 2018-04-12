@@ -3,6 +3,7 @@ package io.github.pseudoresonance.pseudoplayers;
 import java.util.ArrayList;
 
 import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import io.github.pseudoresonance.pseudoapi.bukkit.CommandDescription;
 import io.github.pseudoresonance.pseudoapi.bukkit.HelpSC;
@@ -18,6 +19,7 @@ import io.github.pseudoresonance.pseudoplayers.commands.PlayerSC;
 import io.github.pseudoresonance.pseudoplayers.completers.PlayerTC;
 import io.github.pseudoresonance.pseudoplayers.completers.PseudoPlayersTC;
 import io.github.pseudoresonance.pseudoplayers.listeners.PlayerJoinLeaveL;
+import net.milkbowl.vault.economy.Economy;
 
 public class PseudoPlayers extends PseudoPlugin {
 
@@ -32,6 +34,8 @@ public class PseudoPlayers extends PseudoPlugin {
 	
 	private static ConfigOptions configOptions;
 	
+	public static Economy economy = null;
+	
 	@Override
 	public void onEnable() {
 		super.onEnable();
@@ -41,6 +45,7 @@ public class PseudoPlayers extends PseudoPlugin {
 		configOptions = new ConfigOptions();
 		ConfigOptions.updateConfig();
 		configOptions.reloadConfig();
+		initVault();
 		message = new Message(this);
 		mainCommand = new MainCommand(plugin);
 		helpSubCommand = new HelpSC(plugin);
@@ -61,6 +66,15 @@ public class PseudoPlayers extends PseudoPlugin {
 	
 	public static ConfigOptions getConfigOptions() {
 		return PseudoPlayers.configOptions;
+	}
+	
+	private void initVault() {
+		if (getServer().getPluginManager().getPlugin("Vault") != null) {
+			RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
+	        if (economyProvider != null) {
+	            economy = economyProvider.getProvider();
+	        }
+		}
 	}
 
 	private void initializeCommands() {
