@@ -42,8 +42,16 @@
 							<goal>copy</goal>
 						</goals>
 						<configuration>
-							<sourceFile>target/${project.artifactId}-${project.version}.jar</sourceFile>
-							<destinationFile>target/${project.artifactId}.jar</destinationFile>
+							<fileSets>
+								<fileSet>
+									<sourceFile>target/${project.artifactId}-${project.version}.jar</sourceFile>
+									<destinationFile>artifacts/${project.artifactId}-${project.version}.jar</destinationFile>
+								</fileSet>
+								<fileSet>
+									<sourceFile>target/${project.artifactId}-${project.version}.jar</sourceFile>
+									<destinationFile>artifacts/${project.artifactId}.jar</destinationFile>
+								</fileSet>
+							</fileSets>
 						</configuration>
 					</execution>
 				</executions>
