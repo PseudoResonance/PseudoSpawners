@@ -1,5 +1,7 @@
 package io.github.pseudoresonance.pseudoplayers.commands;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -121,38 +123,8 @@ public class PlayerSC implements SubCommandExecutor {
 				joinLeaveTime = "Unknown";
 			if (online) {
 				messages.add(ConfigOptions.description + "Online " + joinLeaveTime);
-				if (sender.hasPermission("pseudoplayers.view.location")) {
-					Location loc = Bukkit.getServer().getPlayer(name).getLocation();
-					String world = loc.getWorld().getName();
-					String x = String.valueOf(loc.getBlockX());
-					String y = String.valueOf(loc.getBlockY());
-					String z = String.valueOf(loc.getBlockZ());
-					String tpCommand = io.github.pseudoresonance.pseudoplayers.ConfigOptions.teleportationFormat;
-					tpCommand = tpCommand.replaceAll("\\{world\\}", world);
-					tpCommand = tpCommand.replaceAll("\\{x\\}", x);
-					tpCommand = tpCommand.replaceAll("\\{y\\}", y);
-					tpCommand = tpCommand.replaceAll("\\{z\\}", z);
-					messages.add(new ElementBuilder(new ChatElement(ConfigOptions.description + "Location: "), new ChatElement(ConfigOptions.command + "World: " + world + " X: " + x + " Y: " + y + " Z: " + z, new ChatComponent(ComponentType.SUGGEST_COMMAND, "/" + tpCommand), new ChatComponent(ComponentType.SHOW_TEXT, ConfigOptions.description + "Click to teleport to coordinates"))).build());
-				}
 			} else {
 				messages.add(ConfigOptions.description + "Offline " + joinLeaveTime);
-				if (sender.hasPermission("pseudoplayers.view.logoutlocation")) {
-					Object logoutLocationO = PlayerDataController.getPlayerSetting(uuid, "logoutLocation");
-					if (logoutLocationO != null) {
-						if (logoutLocationO instanceof String) {
-							String s = (String) logoutLocationO;
-							String[] split = s.split(",");
-							if (split.length >= 4) {
-								String tpCommand = io.github.pseudoresonance.pseudoplayers.ConfigOptions.teleportationFormat;
-								tpCommand = tpCommand.replaceAll("\\{world\\}", split[0]);
-								tpCommand = tpCommand.replaceAll("\\{x\\}", split[1]);
-								tpCommand = tpCommand.replaceAll("\\{y\\}", split[2]);
-								tpCommand = tpCommand.replaceAll("\\{z\\}", split[3]);
-								messages.add(new ElementBuilder(new ChatElement(ConfigOptions.description + "Logout Location: "), new ChatElement(ConfigOptions.command + "World: " + split[0] + " X: " + split[1] + " Y: " + split[2] + " Z: " + split[3], new ChatComponent(ComponentType.SUGGEST_COMMAND, "/" + tpCommand), new ChatComponent(ComponentType.SHOW_TEXT, ConfigOptions.description + "Click to teleport to coordinates"))).build());
-							}
-						}
-					}
-				}
 			}
 			if (sender.hasPermission("pseudoplayers.view.playtime")) {
 				Object playtimeO = PlayerDataController.getPlayerSetting(uuid, "playtime");
@@ -173,14 +145,63 @@ public class PlayerSC implements SubCommandExecutor {
 					messages.add(ConfigOptions.description + "Playtime: " + ConfigOptions.command + Utils.millisToHumanFormat(playtime));
 				}
 			}
+			if (online) {
+				if (sender.hasPermission("pseudoplayers.view.location")) {
+					Location loc = Bukkit.getServer().getPlayer(name).getLocation();
+					String world = loc.getWorld().getName();
+					String x = String.valueOf(loc.getBlockX());
+					String y = String.valueOf(loc.getBlockY());
+					String z = String.valueOf(loc.getBlockZ());
+					String tpCommand = io.github.pseudoresonance.pseudoplayers.ConfigOptions.teleportationFormat;
+					tpCommand = tpCommand.replaceAll("\\{world\\}", world);
+					tpCommand = tpCommand.replaceAll("\\{x\\}", x);
+					tpCommand = tpCommand.replaceAll("\\{y\\}", y);
+					tpCommand = tpCommand.replaceAll("\\{z\\}", z);
+					messages.add(new ElementBuilder(new ChatElement(ConfigOptions.description + "Location: "), new ChatElement(ConfigOptions.command + "World: " + world + " X: " + x + " Y: " + y + " Z: " + z, new ChatComponent(ComponentType.SUGGEST_COMMAND, "/" + tpCommand), new ChatComponent(ComponentType.SHOW_TEXT, ConfigOptions.description + "Click to teleport to coordinates"))).build());
+				}
+			} else {
+				if (sender.hasPermission("pseudoplayers.view.logoutlocation")) {
+					Object logoutLocationO = PlayerDataController.getPlayerSetting(uuid, "logoutLocation");
+					if (logoutLocationO != null) {
+						if (logoutLocationO instanceof String) {
+							String s = (String) logoutLocationO;
+							String[] split = s.split(",");
+							if (split.length >= 4) {
+								String tpCommand = io.github.pseudoresonance.pseudoplayers.ConfigOptions.teleportationFormat;
+								tpCommand = tpCommand.replaceAll("\\{world\\}", split[0]);
+								tpCommand = tpCommand.replaceAll("\\{x\\}", split[1]);
+								tpCommand = tpCommand.replaceAll("\\{y\\}", split[2]);
+								tpCommand = tpCommand.replaceAll("\\{z\\}", split[3]);
+								messages.add(new ElementBuilder(new ChatElement(ConfigOptions.description + "Logout Location: "), new ChatElement(ConfigOptions.command + "World: " + split[0] + " X: " + split[1] + " Y: " + split[2] + " Z: " + split[3], new ChatComponent(ComponentType.SUGGEST_COMMAND, "/" + tpCommand), new ChatComponent(ComponentType.SHOW_TEXT, ConfigOptions.description + "Click to teleport to coordinates"))).build());
+							}
+						}
+					}
+				}
+			}
 			if (PseudoPlayers.economy != null) {
 				if (sender.hasPermission("pseudoplayers.view.balance")) {
 					OfflinePlayer op = Bukkit.getServer().getOfflinePlayer(UUID.fromString(uuid));
 					double bal = 0.0;
+					String formatBal = "$0";
 					try {
-						bal = PseudoPlayers.economy.getBalance(op);
+						Class<?> c = Class.forName("net.milkbowl.vault.economy.Economy");
+						if (c.isInstance(PseudoPlayers.economy)) {
+							Method balanceM = c.getMethod("getBalance", OfflinePlayer.class);
+							Object balO = balanceM.invoke(PseudoPlayers.economy, op);
+							if (balO instanceof Double) {
+								bal = (Double) balO;
+								Method formatM = c.getMethod("format", double.class);
+								Object finalO = formatM.invoke(PseudoPlayers.economy, bal);
+								if (finalO instanceof String) {
+									formatBal = (String) finalO;
+								}
+							}
+						}
+					} catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+						PseudoPlayers.message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "An error has occurred while getting the balance of: " + PlayerDataController.getName(uuid) + "! Please ensure Vault is up to date, and if so, report this to the author!");
+						e.printStackTrace();
 					} catch (RuntimeException e) {}
-					messages.add(ConfigOptions.description + "Balance: " + ConfigOptions.command + PseudoPlayers.economy.format(bal));
+					messages.add(ConfigOptions.description + "Balance: " + ConfigOptions.command + formatBal);
 				}
 			}
 			if (sender.hasPermission("pseudoplayers.view.ip")) {
@@ -214,7 +235,7 @@ public class PlayerSC implements SubCommandExecutor {
 				else
 					messages.add(ConfigOptions.description + "OP: " + ConfigOptions.command + "False");
 			}
-			if (Bukkit.getPluginManager().getPlugin("PseudoUtils").isEnabled()) {
+			if (Bukkit.getPluginManager().getPlugin("PseudoUtils").isEnabled() && online) {
 				if (sender.hasPermission("pseudoplayers.view.god")) {
 					Object godO = PlayerDataController.getPlayerSetting(uuid, "godMode");
 					if (godO instanceof Boolean) {

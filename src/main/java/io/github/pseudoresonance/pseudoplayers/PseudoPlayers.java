@@ -1,14 +1,18 @@
 package io.github.pseudoresonance.pseudoplayers;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import io.github.pseudoresonance.pseudoapi.bukkit.CommandDescription;
 import io.github.pseudoresonance.pseudoapi.bukkit.HelpSC;
 import io.github.pseudoresonance.pseudoapi.bukkit.MainCommand;
 import io.github.pseudoresonance.pseudoapi.bukkit.Message;
+import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoAPI;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoPlugin;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.Column;
@@ -19,23 +23,22 @@ import io.github.pseudoresonance.pseudoplayers.commands.PlayerSC;
 import io.github.pseudoresonance.pseudoplayers.completers.PlayerTC;
 import io.github.pseudoresonance.pseudoplayers.completers.PseudoPlayersTC;
 import io.github.pseudoresonance.pseudoplayers.listeners.PlayerJoinLeaveL;
-import net.milkbowl.vault.economy.Economy;
 
 public class PseudoPlayers extends PseudoPlugin {
 
 	public static PseudoPlugin plugin;
 	public static Message message;
-	
+
 	private static MainCommand mainCommand;
 	private static HelpSC helpSubCommand;
 
 	private static PlayerSC playerSubCommand;
 	private static PlayerTC playerTabCompleter;
-	
+
 	private static ConfigOptions configOptions;
-	
-	public static Economy economy = null;
-	
+
+	public static Object economy = null;
+
 	@Override
 	public void onEnable() {
 		super.onEnable();
@@ -58,23 +61,29 @@ public class PseudoPlayers extends PseudoPlugin {
 		setCommandDescriptions();
 		PseudoAPI.registerConfig(configOptions);
 	}
-	
+
 	@Override
 	public void onDisable() {
 		super.onDisable();
 	}
-	
+
 	public static ConfigOptions getConfigOptions() {
 		return PseudoPlayers.configOptions;
 	}
-	
+
 	private void initVault() {
 		if (getServer().getPluginManager().getPlugin("Vault") != null) {
-			RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
-	        if (economyProvider != null) {
-	            economy = economyProvider.getProvider();
-	        }
-		}
+			try {
+				RegisteredServiceProvider<?> economyProvider = getServer().getServicesManager().getRegistration(Class.forName("net.milkbowl.vault.economy.Economy"));
+				if (economyProvider != null)
+					economy = economyProvider.getProvider();
+				else
+					message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "Vault is not loaded! Player balance will not be shown!");
+			} catch (ClassNotFoundException e) {
+				message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "Vault is not loaded! Player balance will not be shown!");
+			}
+		} else
+			message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "Vault is not loaded! Player balance will not be shown!");
 	}
 
 	private void initializeCommands() {
@@ -82,14 +91,32 @@ public class PseudoPlayers extends PseudoPlugin {
 		this.getCommand("player").setExecutor(playerSubCommand);
 		if (ConfigOptions.aggressiveCommands) {
 			PluginCommand pc = getServer().getPluginCommand("p");
-			pc.setExecutor(playerSubCommand);
-			pc.setTabCompleter(playerTabCompleter);
+			PluginCommand newPC = getServer().getPluginCommand(pc.getPlugin().getDescription().getName().toLowerCase(java.util.Locale.ENGLISH) + ":" + pc.getName());
+			try {
+				Field f = pc.getClass().getDeclaredField("owningPlugin");
+				f.setAccessible(true);
+				f.set(newPC, pc.getPlugin());
+				f.set(pc, (Plugin) this);
+			} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "Error while forcefully taking over /p! Please update the plugin!");
+			}
+			newPC.setAliases(pc.getAliases());
+			newPC.setDescription(pc.getDescription());
+			newPC.setExecutor(pc.getExecutor());
+			newPC.setLabel(pc.getLabel());
+			newPC.setName(pc.getName());
+			newPC.setPermission(pc.getPermission());
+			newPC.setPermissionMessage(pc.getPermissionMessage());
+			newPC.setTabCompleter(pc.getTabCompleter());
+			newPC.setUsage(pc.getUsage());
 			pc.setAliases(new ArrayList<String>());
 			pc.setDescription("Shows player information");
+			pc.setExecutor(playerSubCommand);
 			pc.setLabel("player");
 			pc.setName("player");
 			pc.setPermission("");
 			pc.setPermissionMessage("");
+			pc.setTabCompleter(playerTabCompleter);
 			pc.setUsage("");
 		}
 	}
