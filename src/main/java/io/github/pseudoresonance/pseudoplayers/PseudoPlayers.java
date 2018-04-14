@@ -44,7 +44,6 @@ public class PseudoPlayers extends PseudoPlugin {
 		PseudoUpdater.registerPlugin(this);
 	}
 
-	@Override
 	public void onEnable() {
 		super.onEnable();
 		this.saveDefaultConfig();
@@ -53,8 +52,8 @@ public class PseudoPlayers extends PseudoPlugin {
 		configOptions = new ConfigOptions();
 		ConfigOptions.updateConfig();
 		configOptions.reloadConfig();
-		initVault();
 		message = new Message(this);
+		initVault();
 		mainCommand = new MainCommand(plugin);
 		helpSubCommand = new HelpSC(plugin);
 		playerSubCommand = new PlayerSC();
