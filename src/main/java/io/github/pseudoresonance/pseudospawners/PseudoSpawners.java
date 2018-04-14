@@ -47,7 +47,6 @@ public class PseudoSpawners extends PseudoPlugin {
 		PseudoUpdater.registerPlugin(this);
 	}
 	
-	@Override
 	public void onEnable() {
 		super.onEnable();
 		bukkitVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
