@@ -16,6 +16,7 @@ import io.github.pseudoresonance.pseudoapi.bukkit.MainCommand;
 import io.github.pseudoresonance.pseudoapi.bukkit.Message;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoAPI;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoPlugin;
+import io.github.pseudoresonance.pseudoapi.bukkit.PseudoUpdater;
 import io.github.pseudoresonance.pseudospawners.commands.EditSpawnerSC;
 import io.github.pseudoresonance.pseudospawners.commands.ReloadSC;
 import io.github.pseudoresonance.pseudospawners.commands.ResetSC;
@@ -41,6 +42,10 @@ public class PseudoSpawners extends PseudoPlugin {
 	private static String bukkitVersion;
 	
 	private static Map<String, Integer> page = new HashMap<String, Integer>();
+	
+	public void onLoad() {
+		PseudoUpdater.registerPlugin(this);
+	}
 	
 	@Override
 	public void onEnable() {
