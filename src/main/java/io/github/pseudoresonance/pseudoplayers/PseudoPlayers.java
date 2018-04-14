@@ -15,6 +15,7 @@ import io.github.pseudoresonance.pseudoapi.bukkit.Message;
 import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoAPI;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoPlugin;
+import io.github.pseudoresonance.pseudoapi.bukkit.PseudoUpdater;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.Column;
 import io.github.pseudoresonance.pseudoapi.bukkit.playerdata.PlayerDataController;
 import io.github.pseudoresonance.pseudoplayers.commands.ReloadSC;
@@ -38,6 +39,10 @@ public class PseudoPlayers extends PseudoPlugin {
 	private static ConfigOptions configOptions;
 
 	public static Object economy = null;
+	
+	public void onLoad() {
+		PseudoUpdater.registerPlugin(this);
+	}
 
 	@Override
 	public void onEnable() {
