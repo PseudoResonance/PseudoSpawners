@@ -198,9 +198,19 @@ public class PlayerSC implements SubCommandExecutor {
 							}
 						}
 					} catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-						PseudoPlayers.message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "An error has occurred while getting the balance of: " + PlayerDataController.getName(uuid) + "! Please ensure Vault is up to date, and if so, report this to the author!");
-						e.printStackTrace();
-					} catch (RuntimeException e) {}
+						boolean exit = false;
+						if (e instanceof InvocationTargetException) {
+							if (e.getCause() != null) {
+								if (e.getCause() instanceof RuntimeException) {
+									exit = true;
+								}
+							}
+						}
+						if (!exit) {
+							PseudoPlayers.message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "An error has occurred while getting the balance of: " + PlayerDataController.getName(uuid) + "! Please ensure Vault is up to date, and if so, report this to the author!");
+							e.printStackTrace();
+						}
+					}
 					messages.add(ConfigOptions.description + "Balance: " + ConfigOptions.command + formatBal);
 				}
 			}
