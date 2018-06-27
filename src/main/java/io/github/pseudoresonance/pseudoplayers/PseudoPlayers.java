@@ -82,7 +82,7 @@ public class PseudoPlayers extends PseudoPlugin {
 				if (economyProvider != null)
 					economy = economyProvider.getProvider();
 				else
-					message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "Vault is not loaded! Player balance will not be shown!");
+					message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "No Vault economy is loaded! Player balance will not be shown!");
 			} catch (ClassNotFoundException e) {
 				message.sendPluginError(Bukkit.getConsoleSender(), Errors.CUSTOM, "Vault is not loaded! Player balance will not be shown!");
 			}

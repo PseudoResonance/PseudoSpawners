@@ -1,7 +1,7 @@
 name: PseudoPlayers
 author: PseudoResonance
 main: io.github.pseudoresonance.pseudoplayers.PseudoPlayers
-version: 1.0.3
+version: 1.0.4
 description: Stores and gets data about players
 depend: [PseudoAPI]
 softdepend: [Vault,VoxelSniper]
