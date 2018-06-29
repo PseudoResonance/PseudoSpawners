@@ -121,11 +121,10 @@ public class PlayerSC implements SubCommandExecutor {
 				}
 			} else
 				joinLeaveTime = "Unknown";
-			if (online) {
+			if (online)
 				messages.add(ConfigOptions.description + "Online " + joinLeaveTime);
-			} else {
+			else
 				messages.add(ConfigOptions.description + "Offline " + joinLeaveTime);
-			}
 			if (sender.hasPermission("pseudoplayers.view.playtime")) {
 				Object playtimeO = PlayerDataController.getPlayerSetting(uuid, "playtime");
 				if (playtimeO instanceof BigInteger || playtimeO instanceof Long) {
@@ -215,11 +214,15 @@ public class PlayerSC implements SubCommandExecutor {
 				}
 			}
 			if (sender.hasPermission("pseudoplayers.view.ip")) {
-				Object ipO = PlayerDataController.getPlayerSetting(uuid, "ip");
-				if (ipO instanceof String) {
-					String ip = (String) ipO;
-					if (!ip.equals("0.0.0.0")) {
-						messages.add(ConfigOptions.description + "IP: " + ConfigOptions.command + ip);
+				if (online)
+					messages.add(ConfigOptions.description + "IP: " + ConfigOptions.command + Bukkit.getServer().getPlayer(name).getAddress().getAddress().getHostAddress());
+				else {
+					Object ipO = PlayerDataController.getPlayerSetting(uuid, "ip");
+					if (ipO instanceof String) {
+						String ip = (String) ipO;
+						if (!ip.equals("0.0.0.0")) {
+							messages.add(ConfigOptions.description + "IP: " + ConfigOptions.command + ip);
+						}
 					}
 				}
 			}

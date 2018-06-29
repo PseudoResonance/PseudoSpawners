@@ -1,5 +1,6 @@
 package io.github.pseudoresonance.pseudoplayers.listeners;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -15,17 +16,20 @@ public class PlayerJoinLeaveL implements Listener {
 
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent e) {
-		PlayerDataController.setPlayerSetting(e.getPlayer().getUniqueId().toString(), "ip", e.getRealAddress().getHostAddress());
+		PlayerDataController.setPlayerSetting(e.getPlayer().getUniqueId().toString(), "ip", e.getPlayer().getAddress().getAddress().getHostAddress());
 	}
 
 	@EventHandler
 	public void onPlayerLeave(PlayerQuitEvent e) {
+		HashMap<String, Object> settings = new HashMap<String, Object>();
 		Player p = e.getPlayer();
 		Location l = p.getLocation();
 		String location = l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
 		UUID u = p.getUniqueId();
 		String uuid = u.toString();
-		PlayerDataController.setPlayerSetting(uuid, "logoutLocation", location);
+		settings.put("logoutLocation", location);
+		settings.put("ip", p.getAddress().getAddress().getHostAddress());
+		PlayerDataController.setPlayerSettings(uuid, settings);
 	}
 
 }
