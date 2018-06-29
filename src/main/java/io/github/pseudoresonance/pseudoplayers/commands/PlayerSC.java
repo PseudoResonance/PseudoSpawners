@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -87,6 +88,9 @@ public class PlayerSC implements SubCommandExecutor {
 				if (firstJoinO instanceof Timestamp) {
 					firstJoinTS = (Timestamp) firstJoinO;
 				}
+				if (firstJoinO instanceof Date) {
+					firstJoinTS = new Timestamp(((Date) firstJoinO).getTime());
+				}
 				LocalDate firstJoinDate = firstJoinTS.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 				long firstJoinDays = ChronoUnit.DAYS.between(firstJoinDate, Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault()).toLocalDate());
 				if (firstJoinDays >= io.github.pseudoresonance.pseudoplayers.ConfigOptions.firstJoinTimeDifference) {
@@ -107,6 +111,9 @@ public class PlayerSC implements SubCommandExecutor {
 				Timestamp joinLeaveTS = new Timestamp(System.currentTimeMillis());
 				if (joinLeaveO instanceof Timestamp) {
 					joinLeaveTS = (Timestamp) joinLeaveO;
+				}
+				if (joinLeaveO instanceof Date) {
+					joinLeaveTS = new Timestamp(((Date) joinLeaveO).getTime());
 				}
 				LocalDate joinLeaveDate = joinLeaveTS.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 				long joinLeaveDays = ChronoUnit.DAYS.between(joinLeaveDate, Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault()).toLocalDate());
