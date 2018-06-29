@@ -98,19 +98,12 @@ public class ConfigOptions implements ConfigOption {
 		} else {
 			Message.sendConsoleMessage(ChatColor.RED + "Invalid config option for TeleportationFormat!");
 		}
-		try {
-			String s = PseudoPlayers.plugin.getConfig().getString("AggressiveCommands");
-			if (s.equalsIgnoreCase("true")) {
-				aggressiveCommands = true;
-			} else if (s.equalsIgnoreCase("false")) {
-				aggressiveCommands = false;
-			} else {
-				aggressiveCommands = false;
-				Message.sendConsoleMessage(ChatColor.RED + "Invalid config option for AggressiveCommands!");
-			}
-		} catch (Exception e) {
-			Message.sendConsoleMessage(ChatColor.RED + "Invalid config option for AggressiveCommands!");
-		}
+		boolean aggressiveCmds = PseudoPlayers.plugin.getConfig().getBoolean("AggressiveCommands");
+		aggressiveCommands = aggressiveCmds;
+		if (aggressiveCmds)
+			PseudoPlayers.registerPCommand();
+		else
+			PseudoPlayers.unregisterPCommand();
 	}
 	
 	private static boolean isInteger(String s) {
