@@ -1,5 +1,7 @@
 package io.github.pseudoresonance.pseudospawners;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,7 +70,6 @@ public class PseudoSpawners extends PseudoPlugin {
 		createRecipes();
 	}
 	
-	@Override
 	public void onDisable() {
 		super.onDisable();
 	}
@@ -137,7 +138,6 @@ public class PseudoSpawners extends PseudoPlugin {
 		return is;
 	}
 
-	@SuppressWarnings("deprecation")
 	private static void createRecipes() {
 		ShapedRecipe rec;
 		ItemStack spawner = new ItemStack(Material.MOB_SPAWNER, 1);
@@ -145,7 +145,18 @@ public class PseudoSpawners extends PseudoPlugin {
 			NamespacedKey key = new NamespacedKey(plugin, "spawner");
 			rec = new ShapedRecipe(key, spawner);
 		} else {
-			rec = new ShapedRecipe(spawner);
+			try {
+				Class<?> recipe = Class.forName("org.bukkit.inventory.ShapedRecipe");
+				Constructor<?> constructor = recipe.getConstructor(ItemStack.class);
+				Object recO = constructor.newInstance(spawner);
+				if (recO instanceof ShapedRecipe)
+					rec = (ShapedRecipe) recO;
+				else
+					return;
+			} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
+				return;
+			}
 		}
 		rec.shape("***", "*%*", "***");
 		rec.setIngredient('*', Material.IRON_FENCE);

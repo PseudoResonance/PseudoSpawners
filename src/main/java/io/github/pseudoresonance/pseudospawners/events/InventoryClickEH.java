@@ -80,12 +80,10 @@ public class InventoryClickEH implements Listener {
 								int page = PseudoSpawners.getPage(p.getName());
 								if (name.startsWith("§1§f")) {
 									int o = page + 1;
-									p.closeInventory();
 									GUISetPage.setPage(p, o);
 									e.setCancelled(true);
 								} else if (name.startsWith("§2§f")) {
 									int o = page - 1;
-									p.closeInventory();
 									GUISetPage.setPage(p, o);
 									e.setCancelled(true);
 								} else if (isEgg(is)) {

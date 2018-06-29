@@ -26,10 +26,10 @@ public class BlockBreakEH implements Listener {
 		ItemStack is = e.getPlayer().getInventory().getItemInMainHand();
 		Player p = e.getPlayer();
 		if (e.getBlock().getType() == Material.MOB_SPAWNER) {
-			Block b = e.getBlock();
-			ItemMeta im = is.getItemMeta();
-			boolean silk = false;
 			if (is != null) {
+				Block b = e.getBlock();
+				ItemMeta im = is.getItemMeta();
+				boolean silk = false;
 				if (im != null) {
 					if (im.hasEnchants()) {
 						Map<Enchantment, Integer> enchs = im.getEnchants();

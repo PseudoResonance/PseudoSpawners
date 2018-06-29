@@ -1,7 +1,7 @@
 name: PseudoSpawners
 author: PseudoResonance
 main: io.github.pseudoresonance.pseudospawners.PseudoSpawners
-version: 1.0.9
+version: 1.1
 description: Adds the ability to collect and change spawner types
 depend: [PseudoAPI]
 commands:

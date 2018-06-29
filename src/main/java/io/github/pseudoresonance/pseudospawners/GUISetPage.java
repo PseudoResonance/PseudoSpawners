@@ -20,7 +20,12 @@ public class GUISetPage {
 	public static void setPage(Player p, int page) {
 		List<EntityType> entities = ConfigOptions.spawnable;
 		if (entities.size() >= 1) {
-			Inventory inv = Bukkit.createInventory(null, 54, ConfigOptions.interfaceName);
+			Inventory inv = null;
+			if (p.getOpenInventory().getTopInventory().getTitle().contains(ConfigOptions.interfaceName)) {
+				inv = p.getOpenInventory().getTopInventory();
+				inv.clear();
+			} else
+				inv = Bukkit.createInventory(null, 54, ConfigOptions.interfaceName);
 			int total = (int) Math.ceil((double) entities.size() / 45);
 			if (page > total) {
 				Message.sendConsoleMessage(ChatColor.RED + "Programming Error! That page number is too high!");
@@ -67,7 +72,10 @@ public class GUISetPage {
 					}
 				}
 			}
-			p.openInventory(inv);
+			if (p.getOpenInventory().getTopInventory().getName().equals(ConfigOptions.interfaceName))
+				p.updateInventory();
+			else
+				p.openInventory(inv);
 		} else {
 			PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "There are no entities enabled on the server!");
 		}
