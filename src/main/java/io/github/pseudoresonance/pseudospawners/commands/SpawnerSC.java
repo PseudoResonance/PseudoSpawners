@@ -58,14 +58,18 @@ public class SpawnerSC implements SubCommandExecutor {
 								return true;
 							}
 						}
+						if (!entity.isSpawnable()) {
+							PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "That is an invalid entity type!");
+							return true;
+						}
 						if (p.hasPermission("pseudospawners.override")) {
-							if (p.getInventory().getItemInMainHand().getType() == Material.MOB_SPAWNER) {
+							if (p.getInventory().getItemInMainHand().getType() == Material.SPAWNER) {
 								ItemStack item = p.getInventory().getItemInMainHand();
 								ItemMeta meta = item.getItemMeta();
 								meta.setDisplayName(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner");
 								item.setItemMeta(meta);
 								p.getInventory().setItemInMainHand(item);
-							} else if (p.getInventory().getItemInOffHand().getType() == Material.MOB_SPAWNER) {
+							} else if (p.getInventory().getItemInOffHand().getType() == Material.SPAWNER) {
 								ItemStack item = p.getInventory().getItemInOffHand();
 								ItemMeta meta = item.getItemMeta();
 								meta.setDisplayName(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner");
@@ -76,7 +80,7 @@ public class SpawnerSC implements SubCommandExecutor {
 									Set<Material> set = new HashSet<Material>();
 									set = null;
 									Block b = p.getTargetBlock(set, 5);
-									if (b.getType() == Material.MOB_SPAWNER) {
+									if (b.getType() == Material.SPAWNER) {
 										CreatureSpawner s = (CreatureSpawner) b.getState();
 										s.setSpawnedType(entity);
 										s.update();
@@ -99,13 +103,13 @@ public class SpawnerSC implements SubCommandExecutor {
 						} else {
 							for (EntityType et : ConfigOptions.spawnable) {
 								if (et == entity) {
-									if (p.getInventory().getItemInMainHand().getType() == Material.MOB_SPAWNER) {
+									if (p.getInventory().getItemInMainHand().getType() == Material.SPAWNER) {
 										ItemStack item = p.getInventory().getItemInMainHand();
 										ItemMeta meta = item.getItemMeta();
 										meta.setDisplayName(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner");
 										item.setItemMeta(meta);
 										p.getInventory().setItemInMainHand(item);
-									} else if (p.getInventory().getItemInOffHand().getType() == Material.MOB_SPAWNER) {
+									} else if (p.getInventory().getItemInOffHand().getType() == Material.SPAWNER) {
 										ItemStack item = p.getInventory().getItemInOffHand();
 										ItemMeta meta = item.getItemMeta();
 										meta.setDisplayName(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner");
@@ -116,7 +120,7 @@ public class SpawnerSC implements SubCommandExecutor {
 											Set<Material> set = new HashSet<Material>();
 											set = null;
 											Block b = p.getTargetBlock(set, 5);
-											if (b.getType() == Material.MOB_SPAWNER) {
+											if (b.getType() == Material.SPAWNER) {
 												CreatureSpawner s = (CreatureSpawner) b.getState();
 												s.setSpawnedType(entity);
 												s.update();
@@ -156,7 +160,7 @@ public class SpawnerSC implements SubCommandExecutor {
 	}
 	
 	private static ItemStack newSpawner(String name) {
-		ItemStack is = new ItemStack(Material.MOB_SPAWNER, 1);
+		ItemStack is = new ItemStack(Material.SPAWNER, 1);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(name);
 		is.setItemMeta(im);

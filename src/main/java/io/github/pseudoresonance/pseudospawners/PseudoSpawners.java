@@ -1,7 +1,5 @@
 package io.github.pseudoresonance.pseudospawners;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -131,7 +129,7 @@ public class PseudoSpawners extends PseudoPlugin {
 	}
 	
 	protected static ItemStack newSpawner(String name) {
-		ItemStack is = new ItemStack(Material.MOB_SPAWNER, 1);
+		ItemStack is = new ItemStack(Material.SPAWNER, 1);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(name);
 		is.setItemMeta(im);
@@ -139,29 +137,19 @@ public class PseudoSpawners extends PseudoPlugin {
 	}
 
 	private static void createRecipes() {
-		ShapedRecipe rec;
-		ItemStack spawner = new ItemStack(Material.MOB_SPAWNER, 1);
-		if (Integer.valueOf(bukkitVersion.split("_")[1]) >= 12) {
-			NamespacedKey key = new NamespacedKey(plugin, "spawner");
-			rec = new ShapedRecipe(key, spawner);
-		} else {
-			try {
-				Class<?> recipe = Class.forName("org.bukkit.inventory.ShapedRecipe");
-				Constructor<?> constructor = recipe.getConstructor(ItemStack.class);
-				Object recO = constructor.newInstance(spawner);
-				if (recO instanceof ShapedRecipe)
-					rec = (ShapedRecipe) recO;
-				else
-					return;
-			} catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				e.printStackTrace();
-				return;
+		for (Material m : Material.values()) {
+			if (m.isItem() && m.name().endsWith("_SPAWN_EGG")) {
+				ShapedRecipe rec;
+				String mob = m.name().substring(0, m.name().length() - 10);
+				ItemStack spawner = new ItemStack(Material.SPAWNER, 1);
+				NamespacedKey key = new NamespacedKey(plugin, "spawner_" + mob);
+				rec = new ShapedRecipe(key, spawner);
+				rec.shape("***", "*%*", "***");
+				rec.setIngredient('*', Material.IRON_BARS);
+				rec.setIngredient('%', m);
+				Bukkit.getServer().addRecipe(rec);
 			}
 		}
-		rec.shape("***", "*%*", "***");
-		rec.setIngredient('*', Material.IRON_FENCE);
-		rec.setIngredient('%', Material.MONSTER_EGG);
-		Bukkit.getServer().addRecipe(rec);
 	}
 	
 	public static String getBukkitVersion() {

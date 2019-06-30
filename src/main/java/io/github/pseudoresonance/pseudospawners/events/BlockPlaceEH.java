@@ -26,7 +26,7 @@ public class BlockPlaceEH implements Listener {
 	public void onBlockPlace(BlockPlaceEvent e) {
 		ItemStack is = e.getItemInHand();
 		Player p = e.getPlayer();
-		if (is.getType() == Material.MOB_SPAWNER) {
+		if (is.getType() == Material.SPAWNER) {
 			Block b = e.getBlockPlaced();
 			ItemMeta im = is.getItemMeta();
 			if (im.hasDisplayName()) {
@@ -41,9 +41,13 @@ public class BlockPlaceEH implements Listener {
 					e.setCancelled(true);
 					return;
 				}
+				if (!entity.isSpawnable()) {
+					PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "That is an invalid entity type!");
+					return;
+				}
 				if (p.hasPermission("pseudospawners.override")) {
 					try {
-						if (b.getType() == Material.MOB_SPAWNER) {
+						if (b.getType() == Material.SPAWNER) {
 							CreatureSpawner s = (CreatureSpawner) b.getState();
 							s.setSpawnedType(entity);
 							s.update();
@@ -63,7 +67,7 @@ public class BlockPlaceEH implements Listener {
 					for (EntityType et : ConfigOptions.spawnable) {
 						if (et == entity) {
 							try {
-								if (b.getType() == Material.MOB_SPAWNER) {
+								if (b.getType() == Material.SPAWNER) {
 									if (p.hasPermission("pseudospawners.spawner." + entity.toString().toLowerCase())) {
 										CreatureSpawner s = (CreatureSpawner) b.getState();
 										s.setSpawnedType(entity);
@@ -95,7 +99,7 @@ public class BlockPlaceEH implements Listener {
 	
 	public boolean isEgg(ItemStack is) {
 		Material m = is.getType();
-		if (m == Material.MONSTER_EGGS) {
+		if (m.isItem() && m.name().endsWith("_SPAWN_EGG")) {
 			return true;
 		} else {
 			return false;

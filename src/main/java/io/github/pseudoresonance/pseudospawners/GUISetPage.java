@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SpawnEggMeta;
 
 import io.github.pseudoresonance.pseudoapi.bukkit.Message;
 import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
@@ -18,14 +17,19 @@ import net.md_5.bungee.api.ChatColor;
 public class GUISetPage {
 	
 	public static void setPage(Player p, int page) {
+		setPage(p, page, null);
+	}
+	
+	public static void setPage(Player p, int page, Inventory inv) {
 		List<EntityType> entities = ConfigOptions.spawnable;
 		if (entities.size() >= 1) {
-			Inventory inv = null;
-			if (p.getOpenInventory().getTopInventory().getTitle().contains(ConfigOptions.interfaceName)) {
-				inv = p.getOpenInventory().getTopInventory();
-				inv.clear();
-			} else
+			boolean newInv = false;
+			if (inv == null) {
+				newInv = true;
 				inv = Bukkit.createInventory(null, 54, ConfigOptions.interfaceName);
+			} else {
+				inv.clear();
+			}
 			int total = (int) Math.ceil((double) entities.size() / 45);
 			if (page > total) {
 				Message.sendConsoleMessage(ChatColor.RED + "Programming Error! That page number is too high!");
@@ -72,26 +76,28 @@ public class GUISetPage {
 					}
 				}
 			}
-			if (p.getOpenInventory().getTopInventory().getName().equals(ConfigOptions.interfaceName))
-				p.updateInventory();
-			else
+			if (newInv)
 				p.openInventory(inv);
+			else
+				p.updateInventory();
 		} else {
 			PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "There are no entities enabled on the server!");
 		}
 	}
 	
 	protected static ItemStack newEgg(EntityType et) {
-		ItemStack is = new ItemStack(Material.MONSTER_EGG, 1);
-		ItemMeta im = is.getItemMeta();
-		SpawnEggMeta sem = (SpawnEggMeta) im;
+		if (!et.isSpawnable())
+			throw new IllegalArgumentException("Entity cannot be spawned!");
+		Material m = null;
 		try {
-			sem.setSpawnedType(et);
+			m = Material.valueOf(et.getKey().getKey().toUpperCase() + "_SPAWN_EGG");
 		} catch (IllegalArgumentException e) {
-			sem.setSpawnedType(null);
+			m = Material.BARRIER;
 		}
+		ItemStack is = new ItemStack(m, 1);
+		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(ConfigOptions.color + ConfigOptions.getName(et));
-		is.setItemMeta(sem);
+		is.setItemMeta(im);
 		return is;
 	}
 	

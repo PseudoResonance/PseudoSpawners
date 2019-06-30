@@ -20,7 +20,6 @@ import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SpawnEggMeta;
 
 import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
 import io.github.pseudoresonance.pseudospawners.ConfigOptions;
@@ -37,9 +36,9 @@ public class InventoryClickEH implements Listener {
 			ItemStack[] matrix = inv.getMatrix();
 			if (matrix.length == 9) {
 				if (matrix[0] != null && matrix[1] != null && matrix[2] != null && matrix[3] != null && matrix[4] != null && matrix[5] != null && matrix[6] != null && matrix[7] != null && matrix[8] != null) {
-					if (matrix[0].getType() == Material.IRON_FENCE && matrix[1].getType() == Material.IRON_FENCE && matrix[2].getType() == Material.IRON_FENCE && matrix[3].getType() == Material.IRON_FENCE && matrix[4].getType() == Material.MONSTER_EGG && matrix[5].getType() == Material.IRON_FENCE && matrix[6].getType() == Material.IRON_FENCE && matrix[7].getType() == Material.IRON_FENCE && matrix[8].getType() == Material.IRON_FENCE) {
-						SpawnEggMeta sem = (SpawnEggMeta) matrix[4].getItemMeta();
-						EntityType et = sem.getSpawnedType();
+					if (matrix[0].getType() == Material.IRON_BARS && matrix[1].getType() == Material.IRON_BARS && matrix[2].getType() == Material.IRON_BARS && matrix[3].getType() == Material.IRON_BARS && isEgg(matrix[4].getType()) && matrix[5].getType() == Material.IRON_BARS && matrix[6].getType() == Material.IRON_BARS && matrix[7].getType() == Material.IRON_BARS && matrix[8].getType() == Material.IRON_BARS) {
+						Material m = matrix[4].getType();
+						EntityType et = EntityType.valueOf(m.name().replace("_SPAWN_EGG", ""));
 						if (p.hasPermission("pseudospawners.craft")) {
 							try {
 								if (p.hasPermission("pseudospawners.craft." + et.toString().toLowerCase()) || p.hasPermission("pseudospawners.override")) {
@@ -63,13 +62,13 @@ public class InventoryClickEH implements Listener {
 		Inventory i = e.getClickedInventory();
 		Player p = (Player) e.getWhoClicked();
 		if (i instanceof AnvilInventory) {
-			if (e.getCurrentItem().getType() == Material.MOB_SPAWNER) {
+			if (e.getCurrentItem().getType() == Material.SPAWNER) {
 				e.setCancelled(true);
 				PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "You can't put a spawner in an anvil!");
 			}
 		} else {
 			if (i != null) {
-				String t = i.getName();
+				String t = e.getView().getTitle();
 				if (t.equalsIgnoreCase(ConfigOptions.interfaceName)) {
 					ItemStack is = e.getCurrentItem();
 					if (is != null) {
@@ -80,11 +79,11 @@ public class InventoryClickEH implements Listener {
 								int page = PseudoSpawners.getPage(p.getName());
 								if (name.startsWith("§1§f")) {
 									int o = page + 1;
-									GUISetPage.setPage(p, o);
+									GUISetPage.setPage(p, o, i);
 									e.setCancelled(true);
 								} else if (name.startsWith("§2§f")) {
 									int o = page - 1;
-									GUISetPage.setPage(p, o);
+									GUISetPage.setPage(p, o, i);
 									e.setCancelled(true);
 								} else if (isEgg(is)) {
 									String entityName = ChatColor.stripColor(name);
@@ -92,13 +91,13 @@ public class InventoryClickEH implements Listener {
 									for (EntityType et : ConfigOptions.spawnable) {
 										if (et == entity) {
 											if (p.hasPermission("pseudospawners.spawner")) {
-												if (p.getInventory().getItemInMainHand().getType() == Material.MOB_SPAWNER) {
+												if (p.getInventory().getItemInMainHand().getType() == Material.SPAWNER) {
 													ItemStack item = p.getInventory().getItemInMainHand();
 													ItemMeta meta = item.getItemMeta();
 													meta.setDisplayName(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner");
 													item.setItemMeta(meta);
 													p.getInventory().setItemInMainHand(item);
-												} else if (p.getInventory().getItemInOffHand().getType() == Material.MOB_SPAWNER) {
+												} else if (p.getInventory().getItemInOffHand().getType() == Material.SPAWNER) {
 													ItemStack item = p.getInventory().getItemInOffHand();
 													ItemMeta meta = item.getItemMeta();
 													meta.setDisplayName(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner");
@@ -108,7 +107,7 @@ public class InventoryClickEH implements Listener {
 													Set<Material> set = new HashSet<Material>();
 													set = null;
 													Block b = p.getTargetBlock(set, 5);
-													if (b.getType() == Material.MOB_SPAWNER) {
+													if (b.getType() == Material.SPAWNER) {
 														CreatureSpawner s = (CreatureSpawner) b.getState();
 														s.setSpawnedType(entity);
 														s.update();
@@ -141,7 +140,15 @@ public class InventoryClickEH implements Listener {
 	
 	public boolean isEgg(ItemStack is) {
 		Material m = is.getType();
-		if (m == Material.MONSTER_EGG) {
+		if (m.isItem() && m.name().endsWith("_SPAWN_EGG") || m == Material.BARRIER) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean isEgg(Material m) {
+		if (m.isItem() && m.name().endsWith("_SPAWN_EGG") || m == Material.BARRIER) {
 			return true;
 		} else {
 			return false;
@@ -149,7 +156,7 @@ public class InventoryClickEH implements Listener {
 	}
 	
 	private static ItemStack newSpawner(String name) {
-		ItemStack is = new ItemStack(Material.MOB_SPAWNER, 1);
+		ItemStack is = new ItemStack(Material.SPAWNER, 1);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(name);
 		is.setItemMeta(im);

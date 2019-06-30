@@ -26,7 +26,7 @@ public class EditSpawnerSC implements SubCommandExecutor {
 				Set<Material> set = new HashSet<Material>();
 				set = null;
 				Block b = p.getTargetBlock(set, 5);
-				if (b.getType() == Material.MOB_SPAWNER) {
+				if (b.getType() == Material.SPAWNER) {
 					HashMap<String, String> meta = new HashMap<String, String>();
 					boolean error = false;
 					if (args.length >= 2) {

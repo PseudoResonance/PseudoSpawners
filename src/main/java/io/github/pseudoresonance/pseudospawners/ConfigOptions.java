@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 
@@ -33,8 +33,8 @@ public class ConfigOptions implements ConfigOption {
 	public static String nextPageName;
 	public static int nextPageInt;
 	public static ChatColor color;
-	public static Map<EntityType, String> names;
-	public static Map<String, EntityType> namesReverse;
+	public static HashMap<EntityType, String> names;
+	public static HashMap<String, EntityType> namesReverse;
 	
 	public static boolean updateConfig() {
 		boolean error = false;
@@ -113,7 +113,8 @@ public class ConfigOptions implements ConfigOption {
 		}
 		List<String> ent = new ArrayList<String>();
 		for (EntityType et : EntityType.values()) {
-			ent.add(et.toString());
+			if (et.isSpawnable())
+				ent.add(et.toString());
 		}
 		Collections.sort(ent, Collator.getInstance());
 		for (String st : ent)
@@ -157,18 +158,21 @@ public class ConfigOptions implements ConfigOption {
 			Message.sendConsoleMessage(ChatColor.RED + "Invalid color in config for Color!");
 		}
 		try {
-			Map<EntityType, String> nm = GetNMSName.getNameMap();
-			Map<String, EntityType> nrm = GetNMSName.getNameMapReverse();
-			Set<String> l = PseudoSpawners.plugin.getConfig().getConfigurationSection("Names").getKeys(false);
-			for (String s : l) {
-				String u = s.toUpperCase();
-				try {
-					EntityType et = EntityType.valueOf(u);
-					String n = PseudoSpawners.plugin.getConfig().getString("Names." + s);
-					nm.put(et, n);
-					nrm.put(n, et);
-				} catch (IllegalArgumentException e) {
-					Message.sendConsoleMessage(ChatColor.RED + "Invalid configuration for mob type names! Unknown entity: " + u);
+			HashMap<EntityType, String> nm = GetNMSName.getNameMap();
+			HashMap<String, EntityType> nrm = GetNMSName.getNameMapReverse();
+			ConfigurationSection cs = PseudoSpawners.plugin.getConfig().getConfigurationSection("Names");
+			if (cs != null) {
+				Set<String> l = cs.getKeys(false);
+				for (String s : l) {
+					String u = s.toUpperCase();
+					try {
+						EntityType et = EntityType.valueOf(u);
+						String n = PseudoSpawners.plugin.getConfig().getString("Names." + s);
+						nm.put(et, n);
+						nrm.put(n, et);
+					} catch (IllegalArgumentException e) {
+						Message.sendConsoleMessage(ChatColor.RED + "Invalid configuration for mob type names! Unknown entity: " + u);
+					}
 				}
 			}
 			names = nm;

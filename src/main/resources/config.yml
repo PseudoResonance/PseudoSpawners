@@ -39,24 +39,17 @@ Blacklist:
   - armor_stand
   - arrow
   - boat
-  - complex_part
   - dragon_fireball
-  - dropped_item
   - egg
   - ender_crystal
   - ender_pearl
   - ender_signal
   - evoker_fangs
   - experience_orb
-  - falling_block
   - fireball
-  - firework
-  - fishing_hook
   - giant
   - item_frame
   - leash_hitch
-  - lightning
-  - lingering_potion
   - llama_spit
   - minecart
   - minecart_chest
@@ -73,9 +66,7 @@ Blacklist:
   - spectral_arrow
   - splash_potion
   - thrown_exp_bottle
-  - tipped_arrow
-  - unknown
-  - weather
+  - trident
   - wither_skull
 
 
@@ -88,53 +79,9 @@ Color: e
 
 #What are the names of different mob types?
 #List of possible mob types here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
-Names:
-  bat: "Bat"
-  blaze: "Blaze"
-  cave_spider: "Cave Spider"
-  chicken: "Chicken"
-  cow: "Cow"
-  creeper: "Creeper"
-  donkey: "Donkey"
-  elder_guardian: "Elder Guardian"
-  ender_dragon: "Ender Dragon"
-  enderman: "Enderman"
-  endermite: "Endermite"
-  evoker: "Evoker"
-  ghast: "Ghast"
-  giant: "Giant"
-  guardian: "Guardian"
-  horse: "Horse"
-  husk: "Husk"
-  illusioner: "Illusioner"
-  iron_golem: "Iron Golem"
-  llama: "Llama"
-  magma_cube: "Magma Cube"
-  mule: "Mule"
-  mushroom_cow: "Mooshroom"
-  ocelot: "Ocelot"
-  parrot: "Parrot"
-  pig: "Pig"
-  pig_zombie: "Zombie Pigman"
-  polar_bear: "Polar Bear"
-  rabbit: "Rabbit"
-  sheep: "Sheep"
-  shulker: "Shulker"
-  silverfish: "Silverfish"
-  skeleton: "Skeleton"
-  skeleton_horse: "Skeleton Horse"
-  slime: "Slime"
-  snowman: "Snow Golem"
-  spider: "Spider"
-  squid: "Squid"
-  stray: "Stray"
-  vex: "Vex"
-  villager: "Villager"
-  vindicator: "Vindicator"
-  witch: "Witch"
-  wither: "Wither"
-  wither_skeleton: "Wither Skeleton"
-  wolf: "Wolf"
-  zombie: "Zombie"
-  zombie_horse: "Zombie Horse"
-  zombie_villager: "Zombie Villager"
+
+#List in the following format:
+#Names:
+#  bat: "Bat"
+
+Names: []

@@ -1,7 +1,6 @@
 package io.github.pseudoresonance.pseudospawners.events;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -25,21 +24,12 @@ public class BlockBreakEH implements Listener {
 	public void onBlockBreak(BlockBreakEvent e) {
 		ItemStack is = e.getPlayer().getInventory().getItemInMainHand();
 		Player p = e.getPlayer();
-		if (e.getBlock().getType() == Material.MOB_SPAWNER) {
+		if (e.getBlock().getType() == Material.SPAWNER) {
 			if (is != null) {
 				Block b = e.getBlock();
-				ItemMeta im = is.getItemMeta();
 				boolean silk = false;
-				if (im != null) {
-					if (im.hasEnchants()) {
-						Map<Enchantment, Integer> enchs = im.getEnchants();
-						for (Enchantment ench : enchs.keySet()) {
-							if (ench == Enchantment.SILK_TOUCH) {
-								silk = true;
-							}
-						}
-					}
-					if (p.hasPermission("pseudospawners.collect.nosilk")) {
+				if (is.getType().toString().contains("PICKAXE")) {
+					if (is.containsEnchantment(Enchantment.SILK_TOUCH) || p.hasPermission("pseudospawners.collect.nosilk")) {
 						silk = true;
 					}
 					if (silk && p.getGameMode() != GameMode.CREATIVE) {
@@ -73,7 +63,7 @@ public class BlockBreakEH implements Listener {
 	}
 	
 	private static ItemStack newSpawner(String name, ArrayList<String> lore) {
-		ItemStack is = new ItemStack(Material.MOB_SPAWNER, 1);
+		ItemStack is = new ItemStack(Material.SPAWNER, 1);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(name);
 		im.setLore(lore);
