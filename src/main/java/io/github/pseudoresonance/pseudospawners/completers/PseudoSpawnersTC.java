@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.EntityType;
 
-import io.github.pseudoresonance.pseudospawners.ConfigOptions;
+import io.github.pseudoresonance.pseudospawners.Config;
 
 public class PseudoSpawnersTC implements TabCompleter {
 
@@ -41,9 +41,9 @@ public class PseudoSpawnersTC implements TabCompleter {
 			}
 		} else if (args.length == 2) {
 			if (args[0].equalsIgnoreCase("spawner") && sender.hasPermission("pseudospawners.spawner")) {
-				for (EntityType et : ConfigOptions.spawnable) {
+				for (EntityType et : Config.spawnable) {
 					if (sender.hasPermission("pseudospawners.spawner." + et.toString().toLowerCase())) {
-						possible.add(ConfigOptions.getName(et));
+						possible.add(Config.getName(et));
 					}
 				}
 				if (args[1].equalsIgnoreCase("")) {

@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
-import io.github.pseudoresonance.pseudospawners.ConfigOptions;
+import io.github.pseudoresonance.pseudospawners.Config;
 import io.github.pseudoresonance.pseudospawners.GUISetPage;
 import io.github.pseudoresonance.pseudospawners.PseudoSpawners;
 import io.github.pseudoresonance.pseudoapi.bukkit.SubCommandExecutor;
@@ -29,7 +29,7 @@ public class SpawnerSC implements SubCommandExecutor {
 		if (sender instanceof Player) {
 			Player p = (Player) sender;
 			if (sender.hasPermission("pseudospawners.spawner")) {
-				List<EntityType> ent = ConfigOptions.spawnable;
+				List<EntityType> ent = Config.spawnable;
 				List<EntityType> entities = new ArrayList<EntityType>();
 				for (EntityType enti : ent) {
 					if (p.hasPermission("pseudospawners.spawner." + enti.toString())) {
@@ -49,7 +49,7 @@ public class SpawnerSC implements SubCommandExecutor {
 								build = build + " " + args[i];
 							}
 						}
-						EntityType entity = ConfigOptions.getEntity(build.toUpperCase());
+						EntityType entity = Config.getEntity(build.toUpperCase());
 						if (entity == null) {
 							try {
 								entity = EntityType.valueOf(build.toUpperCase());
@@ -66,13 +66,13 @@ public class SpawnerSC implements SubCommandExecutor {
 							if (p.getInventory().getItemInMainHand().getType() == Material.SPAWNER) {
 								ItemStack item = p.getInventory().getItemInMainHand();
 								ItemMeta meta = item.getItemMeta();
-								meta.setDisplayName(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner");
+								meta.setDisplayName(Config.color + Config.getName(entity) + " Spawner");
 								item.setItemMeta(meta);
 								p.getInventory().setItemInMainHand(item);
 							} else if (p.getInventory().getItemInOffHand().getType() == Material.SPAWNER) {
 								ItemStack item = p.getInventory().getItemInOffHand();
 								ItemMeta meta = item.getItemMeta();
-								meta.setDisplayName(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner");
+								meta.setDisplayName(Config.color + Config.getName(entity) + " Spawner");
 								item.setItemMeta(meta);
 								p.getInventory().setItemInOffHand(item);
 							} else {
@@ -86,7 +86,7 @@ public class SpawnerSC implements SubCommandExecutor {
 										s.update();
 									} else {
 										if (p.getGameMode() == GameMode.CREATIVE || p.hasPermission("pseudospawners.spawn")) {
-											HashMap<Integer, ItemStack> drop = p.getInventory().addItem(newSpawner(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner"));
+											HashMap<Integer, ItemStack> drop = p.getInventory().addItem(newSpawner(Config.color + Config.getName(entity) + " Spawner"));
 											if (drop.containsKey(0)) {
 												p.getWorld().dropItem(p.getLocation(), drop.get(0));
 											}
@@ -101,18 +101,18 @@ public class SpawnerSC implements SubCommandExecutor {
 							p.closeInventory();
 							return true;
 						} else {
-							for (EntityType et : ConfigOptions.spawnable) {
+							for (EntityType et : Config.spawnable) {
 								if (et == entity) {
 									if (p.getInventory().getItemInMainHand().getType() == Material.SPAWNER) {
 										ItemStack item = p.getInventory().getItemInMainHand();
 										ItemMeta meta = item.getItemMeta();
-										meta.setDisplayName(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner");
+										meta.setDisplayName(Config.color + Config.getName(entity) + " Spawner");
 										item.setItemMeta(meta);
 										p.getInventory().setItemInMainHand(item);
 									} else if (p.getInventory().getItemInOffHand().getType() == Material.SPAWNER) {
 										ItemStack item = p.getInventory().getItemInOffHand();
 										ItemMeta meta = item.getItemMeta();
-										meta.setDisplayName(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner");
+										meta.setDisplayName(Config.color + Config.getName(entity) + " Spawner");
 										item.setItemMeta(meta);
 										p.getInventory().setItemInOffHand(item);
 									} else {
@@ -126,7 +126,7 @@ public class SpawnerSC implements SubCommandExecutor {
 												s.update();
 											} else {
 												if (p.getGameMode() == GameMode.CREATIVE || p.hasPermission("pseudospawners.spawn")) {
-													HashMap<Integer, ItemStack> drop = p.getInventory().addItem(newSpawner(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner"));
+													HashMap<Integer, ItemStack> drop = p.getInventory().addItem(newSpawner(Config.color + Config.getName(entity) + " Spawner"));
 													if (drop.containsKey(0)) {
 														p.getWorld().dropItem(p.getLocation(), drop.get(0));
 													}

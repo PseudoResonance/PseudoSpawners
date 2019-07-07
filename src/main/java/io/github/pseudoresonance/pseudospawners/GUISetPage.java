@@ -21,12 +21,12 @@ public class GUISetPage {
 	}
 	
 	public static void setPage(Player p, int page, Inventory inv) {
-		List<EntityType> entities = ConfigOptions.spawnable;
+		List<EntityType> entities = Config.spawnable;
 		if (entities.size() >= 1) {
 			boolean newInv = false;
 			if (inv == null) {
 				newInv = true;
-				inv = Bukkit.createInventory(null, 54, ConfigOptions.interfaceName);
+				inv = Bukkit.createInventory(null, 54, Config.interfaceName);
 			} else {
 				inv.clear();
 			}
@@ -40,7 +40,7 @@ public class GUISetPage {
 			} else if (page == 1) {
 				PseudoSpawners.setPage(p.getName(), 1);
 				if (entities.size() >= 45) {
-					inv.setItem(ConfigOptions.nextPageInt, newStack(ConfigOptions.nextPageMaterial, 1, "§1§f" + ConfigOptions.nextPageName.replace("{page}", "2")));
+					inv.setItem(Config.nextPageLocation, newStack(Config.nextPageMaterial, 1, "§1§f" + Config.nextPageName.replace("{page}", "2")));
 				}
 				for (int i = 0; i <= 44; i++) {
 					if (i < entities.size()) {
@@ -51,7 +51,7 @@ public class GUISetPage {
 			} else if (page == total) {
 				PseudoSpawners.setPage(p.getName(), total);
 				if (entities.size() >= 45) {
-					inv.setItem(ConfigOptions.lastPageInt, newStack(ConfigOptions.lastPageMaterial, 1, "§2§f" + ConfigOptions.lastPageName.replace("{page}", Integer.toString(page - 1))));
+					inv.setItem(Config.lastPageLocation, newStack(Config.lastPageMaterial, 1, "§2§f" + Config.lastPageName.replace("{page}", Integer.toString(page - 1))));
 				}
 				int loc = 8;
 				for (int i = (page - 1) * 45; i <= ((page - 1) * 45) + 44; i++) {
@@ -64,8 +64,8 @@ public class GUISetPage {
 			} else {
 				PseudoSpawners.setPage(p.getName(), page);
 				if (entities.size() >= 45) {
-					inv.setItem(ConfigOptions.lastPageInt, newStack(ConfigOptions.lastPageMaterial, 1, "§1§f" + ConfigOptions.lastPageName.replace("{page}", Integer.toString(page - 1))));
-					inv.setItem(ConfigOptions.nextPageInt, newStack(ConfigOptions.nextPageMaterial, 1, "§2§f" + ConfigOptions.nextPageName.replace("{page}", Integer.toString(page + 1))));
+					inv.setItem(Config.lastPageLocation, newStack(Config.lastPageMaterial, 1, "§1§f" + Config.lastPageName.replace("{page}", Integer.toString(page - 1))));
+					inv.setItem(Config.nextPageLocation, newStack(Config.nextPageMaterial, 1, "§2§f" + Config.nextPageName.replace("{page}", Integer.toString(page + 1))));
 				}
 				int loc = 8;
 				for (int i = (page - 1) * 45; i <= ((page - 1) * 45) + 44; i++) {
@@ -96,7 +96,7 @@ public class GUISetPage {
 		}
 		ItemStack is = new ItemStack(m, 1);
 		ItemMeta im = is.getItemMeta();
-		im.setDisplayName(ConfigOptions.color + ConfigOptions.getName(et));
+		im.setDisplayName(Config.color + Config.getName(et));
 		is.setItemMeta(im);
 		return is;
 	}

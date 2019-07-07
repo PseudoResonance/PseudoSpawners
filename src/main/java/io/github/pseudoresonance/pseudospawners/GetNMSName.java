@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 import org.bukkit.entity.EntityType;
 
+import io.github.pseudoresonance.pseudoapi.bukkit.utils.Utils;
+
 public class GetNMSName {
 
 	private static HashMap<Integer, String> nameMap = new HashMap<Integer, String>();
@@ -21,10 +23,10 @@ public class GetNMSName {
 
 	public static void getNames() {
 		try {
-			Class<?> localeClass = Class.forName("net.minecraft.server." + PseudoSpawners.getBukkitVersion() + ".LocaleLanguage");
-			Class<?> entityTypes = Class.forName("net.minecraft.server." + PseudoSpawners.getBukkitVersion() + ".EntityTypes");
+			Class<?> localeClass = Class.forName("net.minecraft.server." + Utils.getBukkitVersion() + ".LocaleLanguage");
+			Class<?> entityTypes = Class.forName("net.minecraft.server." + Utils.getBukkitVersion() + ".EntityTypes");
 			Object locale = localeClass.newInstance();
-			if (Integer.valueOf(PseudoSpawners.getBukkitVersion().split("_")[1]) >= 13) {
+			if (Integer.valueOf(Utils.getBukkitVersion().split("_")[1]) >= 13) {
 				Field[] entityListField = entityTypes.getFields();
 				ArrayList<Field> mobFields = new ArrayList<Field>();
 				for (Field f : entityListField) {
@@ -48,7 +50,7 @@ public class GetNMSName {
 					}
 				}
 				updateNames();
-			} else if (Integer.valueOf(PseudoSpawners.getBukkitVersion().split("_")[1]) >= 11) {
+			} else if (Integer.valueOf(Utils.getBukkitVersion().split("_")[1]) >= 11) {
 				Field nameListField = entityTypes.getDeclaredField("g");
 				nameListField.setAccessible(true);
 				Object nameList = nameListField.get(null);

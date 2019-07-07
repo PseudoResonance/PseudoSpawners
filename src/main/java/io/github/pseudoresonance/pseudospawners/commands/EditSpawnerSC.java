@@ -10,7 +10,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import io.github.pseudoresonance.pseudoapi.bukkit.ConfigOptions;
+import io.github.pseudoresonance.pseudoapi.bukkit.Config;
 import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
 import io.github.pseudoresonance.pseudospawners.PseudoSpawners;
 import io.github.pseudoresonance.pseudospawners.SpawnerSettings;
@@ -62,7 +62,7 @@ public class EditSpawnerSC implements SubCommandExecutor {
 						if (!error) {
 							String msg = SpawnerSettings.setSettings(b, meta);
 							if (msg.equals(""))
-								PseudoSpawners.message.sendPluginMessage(p, "Set " + ChatColor.RED + setting + ConfigOptions.text + " to " + ChatColor.RED + value + ConfigOptions.text + "!");
+								PseudoSpawners.message.sendPluginMessage(p, "Set " + ChatColor.RED + setting + Config.textColor + " to " + ChatColor.RED + value + Config.textColor + "!");
 							else
 								PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, msg);
 						}

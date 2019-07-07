@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
-import io.github.pseudoresonance.pseudospawners.ConfigOptions;
+import io.github.pseudoresonance.pseudospawners.Config;
 import io.github.pseudoresonance.pseudospawners.PseudoSpawners;
 import io.github.pseudoresonance.pseudospawners.SpawnerSettings;
 
@@ -35,7 +35,7 @@ public class BlockPlaceEH implements Listener {
 				String entityName = ChatColor.stripColor(name);
 				EntityType entity;
 				try {
-					entity = ConfigOptions.getEntity(entityName);
+					entity = Config.getEntity(entityName);
 				} catch (IllegalArgumentException ex) {
 					PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "That spawner is invalid!");
 					e.setCancelled(true);
@@ -64,7 +64,7 @@ public class BlockPlaceEH implements Listener {
 						return;
 					}
 				} else {
-					for (EntityType et : ConfigOptions.spawnable) {
+					for (EntityType et : Config.spawnable) {
 						if (et == entity) {
 							try {
 								if (b.getType() == Material.SPAWNER) {

@@ -1,39 +1,39 @@
-#######################
-#PseudoSpawners Config#
-#######################
+#########################
+# PseudoSpawners Config #
+#########################
 
-#DO NOT CHANGE THIS LINE! YOUR CONFIG WILL BE RESET UPON LOADING IF THIS LINE IS EDITED!
+# DO NOT CHANGE THIS LINE! YOUR CONFIG WILL BE RESET UPON LOADING IF THIS LINE IS EDITED!
 Version: 1
 
 
-#####
-#GUI#
-#####
+#######
+# GUI #
+#######
 
-#Interface Name
+# Interface Name
 InterfaceName: "&c&lPseudoSpawners"
 
-#Last Page Button
-#{page} = Page number
+# Last Page Button
+# {page} = Page number
 LastPageName: "Page {page}"
-LastPageItem: Paper
-#Number between 1-9
-LastPageLocation: 2
+LastPageMaterial: Paper
+# Number between 0-8
+LastPageLocation: 1
 
-#Next Page Button
-#{page} = Page number
+# Next Page Button
+# {page} = Page number
 NextPageName: "Page {page}"
-NextPageItem: Paper
-#Number between 1-9
-NextPageLocation: 8
+NextPageMaterial: Paper
+# Number between 0-8
+NextPageLocation: 7
 
 
-##########
-#Spawners#
-##########
+############
+# Spawners #
+############
 
-#What mob types are not allowed?
-#List of possible mob types here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+# What mob types are not allowed?
+# List of possible mob types here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
 Blacklist:
   - area_effect_cloud
   - armor_stand
@@ -70,18 +70,18 @@ Blacklist:
   - wither_skull
 
 
-###########
-#Mob Names#
-###########
+#############
+# Mob Names #
+#############
 
-#What chat color should the mob type be?
-Color: e
+# What chat color should the mob type be?
+Color: YELLOW
 
-#What are the names of different mob types?
-#List of possible mob types here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+# What are the names of different mob types?
+# List of possible mob types here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
 
-#List in the following format:
-#Names:
+# List in the following format to override defaults:
+# Names:
 #  bat: "Bat"
 
 Names: []

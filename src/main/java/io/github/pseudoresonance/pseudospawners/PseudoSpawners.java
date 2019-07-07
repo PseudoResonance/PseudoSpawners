@@ -37,9 +37,7 @@ public class PseudoSpawners extends PseudoPlugin {
 	private static MainCommand mainCommand;
 	private static HelpSC helpSubCommand;
 	
-	private static ConfigOptions configOptions;
-
-	private static String bukkitVersion;
+	private static Config config;
 	
 	private static Map<String, Integer> page = new HashMap<String, Integer>();
 	
@@ -49,12 +47,11 @@ public class PseudoSpawners extends PseudoPlugin {
 	
 	public void onEnable() {
 		super.onEnable();
-		bukkitVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
 		this.saveDefaultConfig();
 		plugin = this;
 		GetNMSName.getNames();
-		configOptions = new ConfigOptions();
-		ConfigOptions.updateConfig();
+		config = new Config(this);
+		config.updateConfig();
 		message = new Message(this);
 		mainCommand = new MainCommand(plugin);
 		helpSubCommand = new HelpSC(plugin);
@@ -63,8 +60,8 @@ public class PseudoSpawners extends PseudoPlugin {
 		initializeSubCommands();
 		initializeListeners();
 		setCommandDescriptions();
-		configOptions.reloadConfig();
-		PseudoAPI.registerConfig(configOptions);
+		config.reloadConfig();
+		PseudoAPI.registerConfig(config);
 		createRecipes();
 	}
 	
@@ -72,8 +69,8 @@ public class PseudoSpawners extends PseudoPlugin {
 		super.onDisable();
 	}
 	
-	public static ConfigOptions getConfigOptions() {
-		return PseudoSpawners.configOptions;
+	public static Config getConfigOptions() {
+		return PseudoSpawners.config;
 	}
 
 	private void initializeCommands() {
@@ -150,10 +147,6 @@ public class PseudoSpawners extends PseudoPlugin {
 				Bukkit.getServer().addRecipe(rec);
 			}
 		}
-	}
-	
-	public static String getBukkitVersion() {
-		return bukkitVersion;
 	}
 
 }

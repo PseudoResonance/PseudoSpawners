@@ -15,7 +15,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import io.github.pseudoresonance.pseudospawners.ConfigOptions;
+import io.github.pseudoresonance.pseudospawners.Config;
 import io.github.pseudoresonance.pseudospawners.SpawnerSettings;
 
 public class BlockBreakEH implements Listener {
@@ -37,18 +37,18 @@ public class BlockBreakEH implements Listener {
 						EntityType entity = cs.getSpawnedType();
 						if (p.hasPermission("pseudospawners.override")) {
 							ArrayList<String> lore = SpawnerSettings.getSettings(b);
-							String name = ConfigOptions.getName(entity);
-							String full = ConfigOptions.color + name + " Spawner";
+							String name = Config.getName(entity);
+							String full = Config.color + name + " Spawner";
 							ItemStack spawner = newSpawner(full, lore);
 							b.getWorld().dropItem(b.getLocation(), spawner);
 							e.setExpToDrop(0);
 						} else {
-							for (EntityType et : ConfigOptions.spawnable) {
+							for (EntityType et : Config.spawnable) {
 								if (et == entity) {
 									if (p.hasPermission("pseudospawners.spawner." + entity.toString().toLowerCase())) {
 										ArrayList<String> lore = SpawnerSettings.getSettings(b);
-										String name = ConfigOptions.getName(entity);
-										String full = ConfigOptions.color + name + " Spawner";
+										String name = Config.getName(entity);
+										String full = Config.color + name + " Spawner";
 										ItemStack spawner = newSpawner(full, lore);
 										b.getWorld().dropItem(b.getLocation(), spawner);
 										e.setExpToDrop(0);

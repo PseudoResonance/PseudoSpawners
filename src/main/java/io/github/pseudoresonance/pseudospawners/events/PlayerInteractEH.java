@@ -15,7 +15,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
-import io.github.pseudoresonance.pseudospawners.ConfigOptions;
+import io.github.pseudoresonance.pseudospawners.Config;
 import io.github.pseudoresonance.pseudospawners.PseudoSpawners;
 
 public class PlayerInteractEH implements Listener {
@@ -53,7 +53,7 @@ public class PlayerInteractEH implements Listener {
 							PseudoSpawners.message.sendPluginError(p, Errors.NO_PERMISSION, "set a spawner type!");
 						}
 					} else {
-						for (EntityType et : ConfigOptions.spawnable) {
+						for (EntityType et : Config.spawnable) {
 							if (et.equals(entity)) {
 								if (p.hasPermission("pseudospawners.spawner." + entity.toString().toLowerCase())) {
 									if (p.hasPermission("pseudospawners.modify")) {

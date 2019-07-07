@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import io.github.pseudoresonance.pseudoapi.bukkit.Message;
+import io.github.pseudoresonance.pseudoapi.bukkit.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 
 public class SpawnerSettings {
@@ -24,7 +25,7 @@ public class SpawnerSettings {
 			int maxSpawnDelay = 800;
 			int spawnRange = 4;
 			try {
-				Class<?> ccs = Class.forName("org.bukkit.craftbukkit." + PseudoSpawners.getBukkitVersion() + ".block.CraftCreatureSpawner");
+				Class<?> ccs = Class.forName("org.bukkit.craftbukkit." + Utils.getBukkitVersion() + ".block.CraftCreatureSpawner");
 				Object data = ccs.cast(bs);
 				Method mMaxNearbyEntities = ccs.getMethod("getMaxNearbyEntities");
 				Object mne = mMaxNearbyEntities.invoke(data);
@@ -85,7 +86,7 @@ public class SpawnerSettings {
 		if (b.getType() == Material.SPAWNER) {
 			BlockState bs = b.getState();
 			try {
-				Class<?> ccs = Class.forName("org.bukkit.craftbukkit." + PseudoSpawners.getBukkitVersion() + ".block.CraftCreatureSpawner");
+				Class<?> ccs = Class.forName("org.bukkit.craftbukkit." + Utils.getBukkitVersion() + ".block.CraftCreatureSpawner");
 				Object data = ccs.cast(bs);
 				short maxNearbyEntities = -1;
 				short requiredPlayerRange = -1;

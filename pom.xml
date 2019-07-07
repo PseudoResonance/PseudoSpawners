@@ -3,9 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.PseudoResonance</groupId>
 	<artifactId>PseudoSpawners</artifactId>
-	<version>2.0-SNAPSHOT</version>
+	<version>${version}-SNAPSHOT</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<version>2.1</version>
 	</properties>
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
@@ -14,10 +15,6 @@
 				<targetPath>.</targetPath>
 				<filtering>true</filtering>
 				<directory>src/main/resources</directory>
-				<includes>
-					<include>*.yml</include>
-					<include>LICENSE</include>
-				</includes>
 			</resource>
 		</resources>
 		<plugins>

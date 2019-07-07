@@ -22,7 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
-import io.github.pseudoresonance.pseudospawners.ConfigOptions;
+import io.github.pseudoresonance.pseudospawners.Config;
 import io.github.pseudoresonance.pseudospawners.GUISetPage;
 import io.github.pseudoresonance.pseudospawners.PseudoSpawners;
 
@@ -42,7 +42,7 @@ public class InventoryClickEH implements Listener {
 						if (p.hasPermission("pseudospawners.craft")) {
 							try {
 								if (p.hasPermission("pseudospawners.craft." + et.toString().toLowerCase()) || p.hasPermission("pseudospawners.override")) {
-									ItemStack spawner = newSpawner(ConfigOptions.color + ConfigOptions.getName(et) + " Spawner");
+									ItemStack spawner = newSpawner(Config.color + Config.getName(et) + " Spawner");
 									inv.setResult(spawner);
 									p.updateInventory();
 									return;
@@ -69,7 +69,7 @@ public class InventoryClickEH implements Listener {
 		} else {
 			if (i != null) {
 				String t = e.getView().getTitle();
-				if (t.equalsIgnoreCase(ConfigOptions.interfaceName)) {
+				if (t.equalsIgnoreCase(Config.interfaceName)) {
 					ItemStack is = e.getCurrentItem();
 					if (is != null) {
 						ItemMeta im = is.getItemMeta();
@@ -87,20 +87,20 @@ public class InventoryClickEH implements Listener {
 									e.setCancelled(true);
 								} else if (isEgg(is)) {
 									String entityName = ChatColor.stripColor(name);
-									EntityType entity = ConfigOptions.getEntity(entityName);
-									for (EntityType et : ConfigOptions.spawnable) {
+									EntityType entity = Config.getEntity(entityName);
+									for (EntityType et : Config.spawnable) {
 										if (et == entity) {
 											if (p.hasPermission("pseudospawners.spawner")) {
 												if (p.getInventory().getItemInMainHand().getType() == Material.SPAWNER) {
 													ItemStack item = p.getInventory().getItemInMainHand();
 													ItemMeta meta = item.getItemMeta();
-													meta.setDisplayName(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner");
+													meta.setDisplayName(Config.color + Config.getName(entity) + " Spawner");
 													item.setItemMeta(meta);
 													p.getInventory().setItemInMainHand(item);
 												} else if (p.getInventory().getItemInOffHand().getType() == Material.SPAWNER) {
 													ItemStack item = p.getInventory().getItemInOffHand();
 													ItemMeta meta = item.getItemMeta();
-													meta.setDisplayName(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner");
+													meta.setDisplayName(Config.color + Config.getName(entity) + " Spawner");
 													item.setItemMeta(meta);
 													p.getInventory().setItemInOffHand(item);
 												} else {
@@ -113,7 +113,7 @@ public class InventoryClickEH implements Listener {
 														s.update();
 													} else {
 														if (p.getGameMode() == GameMode.CREATIVE || p.hasPermission("pseudospawners.spawn")) {
-															HashMap<Integer, ItemStack> drop = p.getInventory().addItem(newSpawner(ConfigOptions.color + ConfigOptions.getName(entity) + " Spawner"));
+															HashMap<Integer, ItemStack> drop = p.getInventory().addItem(newSpawner(Config.color + Config.getName(entity) + " Spawner"));
 															if (drop.containsKey(0)) {
 																p.getWorld().dropItem(p.getLocation(), drop.get(0));
 															}
