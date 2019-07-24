@@ -38,7 +38,7 @@ public class Config extends PluginConfig {
 	public void reloadConfig() {
 		FileConfiguration fc = PseudoSpawners.plugin.getConfig();
 		boolean locationError = false;
-		interfaceName = PluginConfig.getString(fc, "InterfaceName", interfaceName);
+		interfaceName = ChatColor.translateAlternateColorCodes('&', PluginConfig.getString(fc, "InterfaceName", interfaceName));
 		lastPageName = ChatColor.translateAlternateColorCodes('&', PluginConfig.getString(fc, "LastPageName", lastPageName));
 		lastPageMaterial = PluginConfig.getMaterial(fc, "LastPageMaterial", lastPageMaterial);
 		int lastPageLocation = PluginConfig.getInt(fc, "LastPageLocation", Config.lastPageLocation);
