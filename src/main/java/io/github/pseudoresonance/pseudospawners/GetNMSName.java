@@ -43,13 +43,13 @@ public class GetNMSName {
 							mobFields.add(f);
 						}
 					}
+					Method trans = Arrays.stream(locale.getClass().getMethods()).filter(m -> m.getReturnType().equals(String.class)).filter(m -> m.getParameterCount() == 1).filter(m -> m.getParameters()[0].getType().equals(String.class)).collect(Collectors.toList()).get(0);
 					for (Field f : mobFields) {
 						for (EntityType et : EntityType.values()) {
 							String entityName = et.getKey().getKey();
 							if (entityName == null || f.getName() == null)
 								continue;
 							if (entityName.equalsIgnoreCase(f.getName())) {
-								Method trans = Arrays.stream(locale.getClass().getMethods()).filter(m -> m.getReturnType().equals(String.class)).filter(m -> m.getParameterCount() == 1).filter(m -> m.getParameters()[0].getType().equals(String.class)).collect(Collectors.toList()).get(0);
 								String friendlyName = (String) trans.invoke(locale, "entity.minecraft." + f.getName().toLowerCase());
 								if (!friendlyName.startsWith("entity.minecraft.")) {
 									names.put(et, friendlyName);
@@ -66,12 +66,12 @@ public class GetNMSName {
 					if (nameList instanceof List) {
 						@SuppressWarnings("unchecked")
 						List<Object> nameIterate = (List<Object>) nameList;
+						Method trans = Arrays.stream(locale.getClass().getMethods()).filter(m -> m.getReturnType().equals(String.class)).filter(m -> m.getParameterCount() == 1).filter(m -> m.getParameters()[0].getType().equals(String.class)).collect(Collectors.toList()).get(0);
 						for (int id = 0; id < nameIterate.size(); id++) {
 							try {
 								Object o = nameIterate.get(id);
 								if (o instanceof String) {
 									String name = (String) o;
-									Method trans = Arrays.stream(locale.getClass().getMethods()).filter(m -> m.getReturnType().equals(String.class)).filter(m -> m.getParameterCount() == 1).filter(m -> m.getParameters()[0].getType().equals(String.class)).collect(Collectors.toList()).get(0);
 									String friendlyName = (String) trans.invoke(locale, "entity." + name + ".name");
 									if (!(friendlyName.startsWith("entity.") && friendlyName.endsWith(".name"))) {
 										nameMap.put(id, friendlyName);
@@ -88,12 +88,12 @@ public class GetNMSName {
 					if (nameList instanceof Map) {
 						@SuppressWarnings("unchecked")
 						Map<Object, Object> nameIterate = (Map<Object, Object>) nameList;
+						Method trans = Arrays.stream(locale.getClass().getMethods()).filter(m -> m.getReturnType().equals(String.class)).filter(m -> m.getParameterCount() == 1).filter(m -> m.getParameters()[0].getType().equals(String.class)).collect(Collectors.toList()).get(0);
 						for (Object o : nameIterate.keySet()) {
 							Object oid = nameIterate.get(o);
 							if (o instanceof String && oid instanceof Integer) {
 								String name = (String) o;
 								int id = (Integer) oid;
-								Method trans = Arrays.stream(locale.getClass().getMethods()).filter(m -> m.getReturnType().equals(String.class)).filter(m -> m.getParameterCount() == 1).filter(m -> m.getParameters()[0].getType().equals(String.class)).collect(Collectors.toList()).get(0);
 								String friendlyName = (String) trans.invoke(locale, "entity." + name + ".name");
 								if (!(friendlyName.startsWith("entity.") && friendlyName.endsWith(".name"))) {
 									nameMap.put(id, friendlyName);
