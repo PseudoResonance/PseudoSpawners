@@ -10,8 +10,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import io.github.pseudoresonance.pseudoapi.bukkit.Chat.Errors;
+import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
 import io.github.pseudoresonance.pseudoapi.bukkit.Config;
-import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
 import io.github.pseudoresonance.pseudospawners.PseudoSpawners;
 import io.github.pseudoresonance.pseudospawners.SpawnerSettings;
 import io.github.pseudoresonance.pseudoapi.bukkit.SubCommandExecutor;
@@ -48,36 +49,36 @@ public class EditSpawnerSC implements SubCommandExecutor {
 								} else if (setting.equalsIgnoreCase("SpawnRange")) {
 									meta.put("SpawnRange", Short.toString(s));
 								} else {
-									PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "Error parsing data! Unknown setting: " + setting + "!");
+									PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_unknown_setting", setting));
 									error = true;
 								}
 							} catch (NumberFormatException e) {
-								PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "Error parsing data! Value for setting: " + setting + " must be an integer!");
+								PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.NOT_A_NUMBER, value);
 								error = true;
 							}
 						} else {
-							PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "Error parsing data! Unknown setting: " + setting + "!");
+							PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_unknown_setting", setting));
 							error = true;
 						}
 						if (!error) {
 							String msg = SpawnerSettings.setSettings(b, meta);
 							if (msg.equals(""))
-								PseudoSpawners.message.sendPluginMessage(p, "Set " + ChatColor.RED + setting + Config.textColor + " to " + ChatColor.RED + value + Config.textColor + "!");
+								PseudoSpawners.plugin.getChat().sendPluginMessage(p, LanguageManager.getLanguage(p).getMessage("pseudospawners.set_setting", ChatColor.RED + setting + Config.textColor, ChatColor.RED + value + Config.textColor));
 							else
-								PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, msg);
+								PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, msg);
 						}
 					} else if (args.length == 1) {
 						String setting = args[0];
-						PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "Error parsing data! Please add a value for setting: " + setting + "!");
+						PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_add_value", setting));
 					} else {
-						PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "Error parsing data! Please add a a setting and value!");
+						PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_add_setting_value"));
 					}
 				} else {
-					PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "You are not looking at a spawner!");
+					PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_not_looking"));
 				}
 			}
 		} else {
-			PseudoSpawners.message.sendPluginError(sender, Errors.CUSTOM, "This command is for players only!");
+			PseudoSpawners.plugin.getChat().sendPluginError(sender, Errors.CUSTOM, LanguageManager.getLanguage(sender).getMessage("pseudospawners.error_players_only"));
 			return true;
 		}
 		return true;

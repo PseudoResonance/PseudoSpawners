@@ -7,30 +7,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
-import io.github.pseudoresonance.pseudoapi.bukkit.Message;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoPlugin;
 import io.github.pseudoresonance.pseudoapi.bukkit.data.PluginConfig;
 import net.md_5.bungee.api.ChatColor;
 
 public class Config extends PluginConfig {
 	
-	public static String interfaceName = "&c&lPseudoSpawners";
-	public static String lastPageName = "Page {page}";
 	public static Material lastPageMaterial = Material.PAPER;
 	public static int lastPageLocation = 1;
-	public static String nextPageName = "Page {page}";
 	public static Material nextPageMaterial = Material.PAPER;
 	public static int nextPageLocation = 7;
 
 	public static List<EntityType> blacklist;
 	public static List<EntityType> spawnable;
-	
-	public static String color = "YELLOW";
+
+	public static String color = "§e";
+	public static ChatColor[] colorArray = new ChatColor[] { ChatColor.YELLOW };;
 	public static HashMap<EntityType, String> names;
 	public static HashMap<String, EntityType> namesReverse;
 
@@ -38,29 +36,26 @@ public class Config extends PluginConfig {
 	public void reloadConfig() {
 		FileConfiguration fc = PseudoSpawners.plugin.getConfig();
 		boolean locationError = false;
-		interfaceName = ChatColor.translateAlternateColorCodes('&', PluginConfig.getString(fc, "InterfaceName", interfaceName));
-		lastPageName = ChatColor.translateAlternateColorCodes('&', PluginConfig.getString(fc, "LastPageName", lastPageName));
 		lastPageMaterial = PluginConfig.getMaterial(fc, "LastPageMaterial", lastPageMaterial);
 		int lastPageLocation = PluginConfig.getInt(fc, "LastPageLocation", Config.lastPageLocation);
 		if (lastPageLocation >= 0 && lastPageLocation <= 8) {
 			Config.lastPageLocation = lastPageLocation;
 		} else {
 			locationError = true;
-			Message.sendConsoleMessage(ChatColor.RED + "Invalid config option for LastPageLocation!");
+			PseudoSpawners.plugin.getChat().sendConsolePluginMessage(ChatColor.RED + "Invalid config option for LastPageLocation!");
 		}
-		nextPageName = ChatColor.translateAlternateColorCodes('&', PluginConfig.getString(fc, "NextPageName", nextPageName));
 		nextPageMaterial = PluginConfig.getMaterial(fc, "NextPageMaterial", nextPageMaterial);
 		int nextPageLocation = PluginConfig.getInt(fc, "NextPageLocation", Config.nextPageLocation);
 		if (nextPageLocation >= 0 && nextPageLocation <= 8 && nextPageLocation != lastPageLocation) {
 			Config.nextPageLocation = nextPageLocation;
 		} else {
 			locationError = true;
-			Message.sendConsoleMessage(ChatColor.RED + "Invalid config option for NextPageLocation!");
+			PseudoSpawners.plugin.getChat().sendConsolePluginMessage(ChatColor.RED + "Invalid config option for NextPageLocation!");
 		}
 		if (locationError) {
 			lastPageLocation = 1;
 			nextPageLocation = 7;
-			Message.sendConsoleMessage(ChatColor.RED + "Default item locations have been used!");
+			PseudoSpawners.plugin.getChat().sendConsolePluginMessage(ChatColor.RED + "Default item locations have been used!");
 		}
 		
 		blacklist = new ArrayList<EntityType>();
@@ -76,12 +71,12 @@ public class Config extends PluginConfig {
 					EntityType et = EntityType.valueOf(u);
 					blacklist.add(et);
 				} catch (IllegalArgumentException e) {
-					Message.sendConsoleMessage(ChatColor.RED + "Invalid configuration for blacklisted types! Unknown entity: " + u);
+					PseudoSpawners.plugin.getChat().sendConsolePluginMessage(ChatColor.RED + "Invalid configuration for blacklisted types! Unknown entity: " + u);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			Message.sendConsoleMessage(ChatColor.RED + "Invalid configuration for disallowed mob types at " + config + "!");
+			PseudoSpawners.plugin.getChat().sendConsolePluginMessage(ChatColor.RED + "Invalid configuration for disallowed mob types at " + config + "!");
 		}
 		List<String> ent = new ArrayList<String>();
 		for (EntityType et : EntityType.values()) {
@@ -94,7 +89,8 @@ public class Config extends PluginConfig {
 				if (!blacklist.contains(EntityType.valueOf(st)))
 					spawnable.add(EntityType.valueOf(st));
 		
-		color = PluginConfig.getColorCodes(fc, "Color", color);
+		colorArray = PluginConfig.getColorCodes(fc, "Color", colorArray);
+		color = StringUtils.join(colorArray);
 
 		names = new HashMap<EntityType, String>();
 		namesReverse = new HashMap<String, EntityType>();
@@ -112,14 +108,14 @@ public class Config extends PluginConfig {
 						nm.put(et, n);
 						nrm.put(n, et);
 					} catch (IllegalArgumentException e) {
-						Message.sendConsoleMessage(ChatColor.RED + "Invalid configuration for mob type names! Unknown entity: " + u);
+						PseudoSpawners.plugin.getChat().sendConsolePluginMessage(ChatColor.RED + "Invalid configuration for mob type names! Unknown entity: " + u);
 					}
 				}
 			}
 			names = nm;
 			namesReverse = nrm;
 		} catch (Exception e) {
-			Message.sendConsoleMessage(ChatColor.RED + "Invalid configuration for mob type names!");
+			PseudoSpawners.plugin.getChat().sendConsolePluginMessage(ChatColor.RED + "Invalid configuration for mob type names!");
 		}
 	}
 	

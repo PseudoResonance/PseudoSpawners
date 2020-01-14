@@ -4,38 +4,27 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
-import io.github.pseudoresonance.pseudospawners.PseudoSpawners;
+import io.github.pseudoresonance.pseudoapi.bukkit.Chat;
 import io.github.pseudoresonance.pseudoapi.bukkit.SubCommandExecutor;
+import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
+import io.github.pseudoresonance.pseudospawners.PseudoSpawners;
 
 public class ReloadSC implements SubCommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (sender instanceof Player) {
-			if (sender.hasPermission("pseudospawners.reload")) {
-				try {
-					PseudoSpawners.plugin.reloadConfig();
-				} catch (Exception e) {
-					PseudoSpawners.message.sendPluginError(sender, Errors.GENERIC);
-					return false;
-				}
-				PseudoSpawners.getConfigOptions().reloadConfig();
-				PseudoSpawners.message.sendPluginMessage(sender, "Plugin config reloaded!");
-				return true;
-			} else {
-				PseudoSpawners.message.sendPluginError(sender, Errors.NO_PERMISSION, "reload the config!");
-				return false;
-			}
-		} else {
+		if (!(sender instanceof Player) || sender.hasPermission("pseudospawners.reload")) {
 			try {
 				PseudoSpawners.plugin.reloadConfig();
 			} catch (Exception e) {
-				PseudoSpawners.message.sendPluginError(sender, Errors.GENERIC);
+				PseudoSpawners.plugin.getChat().sendPluginError(sender, Chat.Errors.GENERIC);
 				return false;
 			}
 			PseudoSpawners.getConfigOptions().reloadConfig();
-			PseudoSpawners.message.sendPluginMessage(sender, "Plugin config reloaded!");
+			PseudoSpawners.plugin.getChat().sendPluginMessage(sender, LanguageManager.getLanguage(sender).getMessage("pseudoapi.config_reloaded"));
 			return true;
+		} else {
+			PseudoSpawners.plugin.getChat().sendPluginError(sender, Chat.Errors.NO_PERMISSION, LanguageManager.getLanguage(sender).getMessage("pseudoapi.permission_reload_config"));
+			return false;
 		}
 	}
 

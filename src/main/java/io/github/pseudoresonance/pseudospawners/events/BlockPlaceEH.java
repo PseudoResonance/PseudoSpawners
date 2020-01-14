@@ -15,13 +15,14 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
+import io.github.pseudoresonance.pseudoapi.bukkit.Chat.Errors;
+import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
 import io.github.pseudoresonance.pseudospawners.Config;
 import io.github.pseudoresonance.pseudospawners.PseudoSpawners;
 import io.github.pseudoresonance.pseudospawners.SpawnerSettings;
 
 public class BlockPlaceEH implements Listener {
-	
+
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent e) {
 		ItemStack is = e.getItemInHand();
@@ -37,12 +38,12 @@ public class BlockPlaceEH implements Listener {
 				try {
 					entity = Config.getEntity(entityName);
 				} catch (IllegalArgumentException ex) {
-					PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "That spawner is invalid!");
+					PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_invalid_spawner"));
 					e.setCancelled(true);
 					return;
 				}
 				if (!entity.isSpawnable()) {
-					PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "That is an invalid entity type!");
+					PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_invalid_entity"));
 					return;
 				}
 				if (p.hasPermission("pseudospawners.override")) {
@@ -56,47 +57,45 @@ public class BlockPlaceEH implements Listener {
 							}
 							return;
 						} else {
-							PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "You are not looking at a spawner!");
+							PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_not_looking"));
 							return;
 						}
 					} catch (Exception ex) {
-						PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "Minecraft disallows that entity type!");
+						PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_minecraft_disallows"));
 						return;
 					}
 				} else {
-					for (EntityType et : Config.spawnable) {
-						if (et == entity) {
-							try {
-								if (b.getType() == Material.SPAWNER) {
-									if (p.hasPermission("pseudospawners.spawner." + entity.toString().toLowerCase())) {
-										CreatureSpawner s = (CreatureSpawner) b.getState();
-										s.setSpawnedType(entity);
-										s.update();
-										if (im.hasLore()) {
-											setData(p, b, im.getLore());
-										}
-									} else {
-										PseudoSpawners.message.sendPluginError(p, Errors.NO_PERMISSION, "You do not have permission to use that spawner!");
-										e.setCancelled(true);
+					if (Config.spawnable.contains(entity)) {
+						try {
+							if (b.getType() == Material.SPAWNER) {
+								if (p.hasPermission("pseudospawners.spawner." + entity.toString().toLowerCase())) {
+									CreatureSpawner s = (CreatureSpawner) b.getState();
+									s.setSpawnedType(entity);
+									s.update();
+									if (im.hasLore()) {
+										setData(p, b, im.getLore());
 									}
-									return;
 								} else {
-									PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "You are not looking at a spawner!");
-									return;
+									PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.NO_PERMISSION, LanguageManager.getLanguage(p).getMessage("pseudospawners.permission_use_spawner", Config.getName(entity)));
+									e.setCancelled(true);
 								}
-							} catch (Exception ex) {
-								PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "Minecraft disallows that entity type!");
+								return;
+							} else {
+								PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_not_looking"));
 								return;
 							}
+						} catch (Exception ex) {
+							PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_minecraft_disallows"));
+							return;
 						}
 					}
 				}
-				PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "That spawner is disabled!");
+				PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_type_disabled"));
 				e.setCancelled(true);
 			}
 		}
 	}
-	
+
 	public boolean isEgg(ItemStack is) {
 		Material m = is.getType();
 		if (m.isItem() && m.name().endsWith("_SPAWN_EGG")) {
@@ -105,7 +104,7 @@ public class BlockPlaceEH implements Listener {
 			return false;
 		}
 	}
-	
+
 	private void setData(Player p, Block b, List<String> lore) {
 		HashMap<String, String> map = new HashMap<String, String>();
 		for (String line : lore) {
@@ -115,7 +114,7 @@ public class BlockPlaceEH implements Listener {
 		}
 		String msg = SpawnerSettings.setSettings(b, map);
 		if (!msg.equals("")) {
-			PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, msg);
+			PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, msg);
 		}
 	}
 

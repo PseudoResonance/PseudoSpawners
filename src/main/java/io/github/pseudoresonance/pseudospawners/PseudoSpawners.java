@@ -3,6 +3,7 @@ package io.github.pseudoresonance.pseudospawners;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -13,12 +14,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import io.github.pseudoresonance.pseudoapi.bukkit.CommandDescription;
 import io.github.pseudoresonance.pseudoapi.bukkit.HelpSC;
 import io.github.pseudoresonance.pseudoapi.bukkit.MainCommand;
-import io.github.pseudoresonance.pseudoapi.bukkit.Message;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoAPI;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoPlugin;
 import io.github.pseudoresonance.pseudoapi.bukkit.PseudoUpdater;
 import io.github.pseudoresonance.pseudospawners.commands.EditSpawnerSC;
+import io.github.pseudoresonance.pseudospawners.commands.ReloadLocalizationSC;
 import io.github.pseudoresonance.pseudospawners.commands.ReloadSC;
+import io.github.pseudoresonance.pseudospawners.commands.ResetLocalizationSC;
 import io.github.pseudoresonance.pseudospawners.commands.ResetSC;
 import io.github.pseudoresonance.pseudospawners.commands.SpawnerSC;
 import io.github.pseudoresonance.pseudospawners.completers.EditSpawnerTC;
@@ -32,7 +34,6 @@ import io.github.pseudoresonance.pseudospawners.events.PlayerInteractEH;
 public class PseudoSpawners extends PseudoPlugin {
 
 	public static PseudoPlugin plugin;
-	public static Message message;
 	
 	private static MainCommand mainCommand;
 	private static HelpSC helpSubCommand;
@@ -40,6 +41,9 @@ public class PseudoSpawners extends PseudoPlugin {
 	private static Config config;
 	
 	private static Map<String, Integer> page = new HashMap<String, Integer>();
+
+	@SuppressWarnings("unused")
+	private static Metrics metrics = null;
 	
 	public void onLoad() {
 		PseudoUpdater.registerPlugin(this);
@@ -52,7 +56,6 @@ public class PseudoSpawners extends PseudoPlugin {
 		GetNMSName.getNames();
 		config = new Config(this);
 		config.updateConfig();
-		message = new Message(this);
 		mainCommand = new MainCommand(plugin);
 		helpSubCommand = new HelpSC(plugin);
 		initializeCommands();
@@ -63,10 +66,15 @@ public class PseudoSpawners extends PseudoPlugin {
 		config.reloadConfig();
 		PseudoAPI.registerConfig(config);
 		createRecipes();
+		initializeMetrics();
 	}
 	
 	public void onDisable() {
 		super.onDisable();
+	}
+
+	private void initializeMetrics() {
+		metrics = new Metrics(this);
 	}
 	
 	public static Config getConfigOptions() {
@@ -82,7 +90,9 @@ public class PseudoSpawners extends PseudoPlugin {
 	private void initializeSubCommands() {
 		subCommands.put("help", helpSubCommand);
 		subCommands.put("reload", new ReloadSC());
+		subCommands.put("reloadlocalization", new ReloadLocalizationSC());
 		subCommands.put("reset", new ResetSC());
+		subCommands.put("resetlocalization", new ResetLocalizationSC());
 		subCommands.put("spawner", new SpawnerSC());
 		subCommands.put("editspawner", new EditSpawnerSC());
 	}
@@ -101,12 +111,14 @@ public class PseudoSpawners extends PseudoPlugin {
 	}
 
 	private void setCommandDescriptions() {
-		commandDescriptions.add(new CommandDescription("pseudospawners", "Shows PseudoSpawners information", ""));
-		commandDescriptions.add(new CommandDescription("pseudospawners help", "Shows PseudoSpawners commands", ""));
-		commandDescriptions.add(new CommandDescription("pseudospawners reload", "Reloads PseudoSpawners config", "pseudospawners.reload"));
-		commandDescriptions.add(new CommandDescription("pseudospawners reset", "Resets PseudoSpawners config", "pseudospawners.reset"));
-		commandDescriptions.add(new CommandDescription("pseudospawners spawner", "Sets the type of the spawner you are looking at", "pseudospawners.spawner"));
-		commandDescriptions.add(new CommandDescription("pseudospawners editspawner", "Edits the data of the spawner you are looking at", "pseudospawners.edit"));
+		commandDescriptions.add(new CommandDescription("pseudospawners", "pseudospawners.pseudospawners_help", ""));
+		commandDescriptions.add(new CommandDescription("pseudospawners help", "pseudospawners.pseudospawners_help_help", ""));
+		commandDescriptions.add(new CommandDescription("pseudospawners reload", "pseudospawners.pseudospawners_reload_help", "pseudospawners.reload"));
+		commandDescriptions.add(new CommandDescription("pseudospawners reloadlocalization", "pseudospawners.pseudospawners_reloadlocalization_help", "pseudospawners.reloadlocalization"));
+		commandDescriptions.add(new CommandDescription("pseudospawners reset", "pseudospawners.pseudospawners_reset_help", "pseudospawners.reset"));
+		commandDescriptions.add(new CommandDescription("pseudospawners resetlocalization", "pseudospawners.pseudospawners_resetlocalization_help", "pseudospawners.resetlocalization"));
+		commandDescriptions.add(new CommandDescription("pseudospawners spawner", "pseudospawners.pseudospawners_spawner_help", "pseudospawners.spawner"));
+		commandDescriptions.add(new CommandDescription("pseudospawners editspawner <setting> <value>", "pseudospawners.pseudospawners_editspawner_help", "pseudospawners.edit", false));
 	}
 	
 	public static Map<String, Integer> getPages() {

@@ -22,6 +22,12 @@ public class PseudoSpawnersTC implements TabCompleter {
 			if (sender.hasPermission("pseudospawners.reset")) {
 				possible.add("reset");
 			}
+			if (sender.hasPermission("pseudospawners.reloadlocalization")) {
+				possible.add("reloadlocalization");
+			}
+			if (sender.hasPermission("pseudospawners.resetlocalization")) {
+				possible.add("resetlocalization");
+			}
 			if (sender.hasPermission("pseudospawners.spawner")) {
 				possible.add("spawner");
 			}

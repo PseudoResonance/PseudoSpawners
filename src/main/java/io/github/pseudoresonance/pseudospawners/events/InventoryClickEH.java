@@ -21,13 +21,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
+import io.github.pseudoresonance.pseudoapi.bukkit.Chat.Errors;
+import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
 import io.github.pseudoresonance.pseudospawners.Config;
 import io.github.pseudoresonance.pseudospawners.GUISetPage;
+import io.github.pseudoresonance.pseudospawners.GUISetPage.PseudoSpawnersHolder;
 import io.github.pseudoresonance.pseudospawners.PseudoSpawners;
 
 public class InventoryClickEH implements Listener {
-	
+
 	@EventHandler
 	public void onPrepareItemCraft(PrepareItemCraftEvent e) {
 		try {
@@ -47,29 +49,30 @@ public class InventoryClickEH implements Listener {
 									p.updateInventory();
 									return;
 								}
-							} catch (NullPointerException ex) {}
+							} catch (NullPointerException ex) {
+							}
 							inv.setResult(null);
 							p.updateInventory();
 						}
 					}
 				}
 			}
-		} catch (IndexOutOfBoundsException ex) {}
+		} catch (IndexOutOfBoundsException ex) {
+		}
 	}
-	
+
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent e) {
-		Inventory i = e.getClickedInventory();
+		Inventory i = e.getView().getTopInventory();
 		Player p = (Player) e.getWhoClicked();
 		if (i instanceof AnvilInventory) {
 			if (e.getCurrentItem().getType() == Material.SPAWNER) {
 				e.setCancelled(true);
-				PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "You can't put a spawner in an anvil!");
+				PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_spawner_anvil"));
 			}
 		} else {
 			if (i != null) {
-				String t = e.getView().getTitle();
-				if (t.equalsIgnoreCase(Config.interfaceName)) {
+				if (i.getHolder() instanceof PseudoSpawnersHolder) {
 					ItemStack is = e.getCurrentItem();
 					if (is != null) {
 						ItemMeta im = is.getItemMeta();
@@ -77,57 +80,57 @@ public class InventoryClickEH implements Listener {
 							if (im.hasDisplayName()) {
 								String name = im.getDisplayName();
 								int page = PseudoSpawners.getPage(p.getName());
-								if (name.startsWith("§1§f")) {
-									int o = page + 1;
-									GUISetPage.setPage(p, o, i);
+								switch (name.substring(0, 4)) {
+								case "§1§f":
+									GUISetPage.setPage(p, page + 1, i);
 									e.setCancelled(true);
-								} else if (name.startsWith("§2§f")) {
-									int o = page - 1;
-									GUISetPage.setPage(p, o, i);
+									break;
+								case "§2§f":
+									GUISetPage.setPage(p, page - 1, i);
 									e.setCancelled(true);
-								} else if (isEgg(is)) {
+									break;
+								}
+								if (isEgg(is)) {
 									String entityName = ChatColor.stripColor(name);
 									EntityType entity = Config.getEntity(entityName);
-									for (EntityType et : Config.spawnable) {
-										if (et == entity) {
-											if (p.hasPermission("pseudospawners.spawner")) {
-												if (p.getInventory().getItemInMainHand().getType() == Material.SPAWNER) {
-													ItemStack item = p.getInventory().getItemInMainHand();
-													ItemMeta meta = item.getItemMeta();
-													meta.setDisplayName(Config.color + Config.getName(entity) + " Spawner");
-													item.setItemMeta(meta);
-													p.getInventory().setItemInMainHand(item);
-												} else if (p.getInventory().getItemInOffHand().getType() == Material.SPAWNER) {
-													ItemStack item = p.getInventory().getItemInOffHand();
-													ItemMeta meta = item.getItemMeta();
-													meta.setDisplayName(Config.color + Config.getName(entity) + " Spawner");
-													item.setItemMeta(meta);
-													p.getInventory().setItemInOffHand(item);
+									if (Config.spawnable.contains(entity)) {
+										if (p.hasPermission("pseudospawners.spawner")) {
+											if (p.getInventory().getItemInMainHand().getType() == Material.SPAWNER) {
+												ItemStack item = p.getInventory().getItemInMainHand();
+												ItemMeta meta = item.getItemMeta();
+												meta.setDisplayName(Config.color + Config.getName(entity) + " Spawner");
+												item.setItemMeta(meta);
+												p.getInventory().setItemInMainHand(item);
+											} else if (p.getInventory().getItemInOffHand().getType() == Material.SPAWNER) {
+												ItemStack item = p.getInventory().getItemInOffHand();
+												ItemMeta meta = item.getItemMeta();
+												meta.setDisplayName(Config.color + Config.getName(entity) + " Spawner");
+												item.setItemMeta(meta);
+												p.getInventory().setItemInOffHand(item);
+											} else {
+												Set<Material> set = new HashSet<Material>();
+												set = null;
+												Block b = p.getTargetBlock(set, 5);
+												if (b.getType() == Material.SPAWNER) {
+													CreatureSpawner s = (CreatureSpawner) b.getState();
+													s.setSpawnedType(entity);
+													s.update();
 												} else {
-													Set<Material> set = new HashSet<Material>();
-													set = null;
-													Block b = p.getTargetBlock(set, 5);
-													if (b.getType() == Material.SPAWNER) {
-														CreatureSpawner s = (CreatureSpawner) b.getState();
-														s.setSpawnedType(entity);
-														s.update();
-													} else {
-														if (p.getGameMode() == GameMode.CREATIVE || p.hasPermission("pseudospawners.spawn")) {
-															HashMap<Integer, ItemStack> drop = p.getInventory().addItem(newSpawner(Config.color + Config.getName(entity) + " Spawner"));
-															if (drop.containsKey(0)) {
-																p.getWorld().dropItem(p.getLocation(), drop.get(0));
-															}
-														} else {
-															PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "You are not holding or looking at a spawner!");
+													if (p.getGameMode() == GameMode.CREATIVE || p.hasPermission("pseudospawners.spawn")) {
+														HashMap<Integer, ItemStack> drop = p.getInventory().addItem(newSpawner(Config.color + Config.getName(entity) + " Spawner"));
+														if (drop.containsKey(0)) {
+															p.getWorld().dropItem(p.getLocation(), drop.get(0));
 														}
+													} else {
+														PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_not_holding_looking"));
 													}
 												}
-												p.closeInventory();
-											} else {
-												PseudoSpawners.message.sendPluginError(p, Errors.NO_PERMISSION, "set a spawner type without an egg!");
 											}
-											e.setCancelled(true);
+											p.closeInventory();
+										} else {
+											PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.NO_PERMISSION, LanguageManager.getLanguage(p).getMessage("pseudospawners.permission_set_type_without_egg"));
 										}
+										e.setCancelled(true);
 									}
 								}
 							}
@@ -137,7 +140,7 @@ public class InventoryClickEH implements Listener {
 			}
 		}
 	}
-	
+
 	public boolean isEgg(ItemStack is) {
 		Material m = is.getType();
 		if (m.isItem() && m.name().endsWith("_SPAWN_EGG") || m == Material.BARRIER) {
@@ -146,7 +149,7 @@ public class InventoryClickEH implements Listener {
 			return false;
 		}
 	}
-	
+
 	public boolean isEgg(Material m) {
 		if (m.isItem() && m.name().endsWith("_SPAWN_EGG") || m == Material.BARRIER) {
 			return true;
@@ -154,7 +157,7 @@ public class InventoryClickEH implements Listener {
 			return false;
 		}
 	}
-	
+
 	private static ItemStack newSpawner(String name) {
 		ItemStack is = new ItemStack(Material.SPAWNER, 1);
 		ItemMeta im = is.getItemMeta();

@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 
 import org.bukkit.entity.EntityType;
 
-import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
+import io.github.pseudoresonance.pseudoapi.bukkit.Chat.Errors;
+import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
 import io.github.pseudoresonance.pseudoapi.bukkit.utils.Utils;
 
 public class GetNMSName {
@@ -106,7 +107,7 @@ public class GetNMSName {
 				}
 			}
 		} catch (ClassNotFoundException | IllegalArgumentException | SecurityException | NoSuchFieldException | IllegalAccessException | InvocationTargetException e) {
-			PseudoSpawners.message.sendConsolePluginError(Errors.CUSTOM, "Unable to fetch mob names from server locale!");
+			PseudoSpawners.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, LanguageManager.getLanguage().getMessage("pseudospawners.error_unable_get_name"));
 			e.printStackTrace();
 		}
 	}

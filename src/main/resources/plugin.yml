@@ -13,12 +13,22 @@ commands:
   editspawner:
     description: Alias for PseudoSpawners editspawner
 permissions:
-  pseudospawners.reset:
-    description: Allows the player to reset the config
-    default: op
   pseudospawners.reload:
     description: Allows the player to reload the plugin
     default: op
+  pseudospawners.reset:
+    description: Allows the player to reset the config
+    default: op
+    children:
+      pseudospawners.reload: true
+  pseudospawners.reloadlocalization:
+    description: Allows the player to reload the localization
+    default: op
+  pseudospawners.resetlocalization:
+    description: Allows the player to reset the localization
+    default: op
+    children:
+      pseudospawners.reloadlocalization: true
   pseudospawners.craft:
     description: Allows the player to craft spawners
     default: true
@@ -52,7 +62,7 @@ permissions:
     default: op
     children:
       pseudospawners.reset: true
-      pseudospawners.reload: true
+      pseudospawners.resetlocalization: true
       pseudospawners.collect.nosilk: true
       pseudospawners.spawner: true
       pseudospawners.override: true

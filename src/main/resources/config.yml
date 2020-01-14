@@ -3,26 +3,19 @@
 #########################
 
 # DO NOT CHANGE THIS LINE! YOUR CONFIG WILL BE RESET UPON LOADING IF THIS LINE IS EDITED!
-Version: 1
+Version: 2
 
 
 #######
 # GUI #
 #######
 
-# Interface Name
-InterfaceName: "&c&lPseudoSpawners"
-
 # Last Page Button
-# {page} = Page number
-LastPageName: "Page {page}"
 LastPageMaterial: Paper
 # Number between 0-8
 LastPageLocation: 1
 
 # Next Page Button
-# {page} = Page number
-NextPageName: "Page {page}"
 NextPageMaterial: Paper
 # Number between 0-8
 NextPageLocation: 7

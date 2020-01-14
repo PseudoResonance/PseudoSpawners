@@ -14,7 +14,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
+import io.github.pseudoresonance.pseudoapi.bukkit.Chat.Errors;
+import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
 import io.github.pseudoresonance.pseudospawners.Config;
 import io.github.pseudoresonance.pseudospawners.PseudoSpawners;
 
@@ -31,7 +32,7 @@ public class PlayerInteractEH implements Listener {
 					Material m = is.getType();
 					EntityType entity = EntityType.valueOf(m.name().replace("_SPAWN_EGG", ""));
 					if (!entity.isSpawnable()) {
-						PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "That is an invalid entity type!");
+						PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_invalid_entity"));
 						return;
 					}
 					if (p.hasPermission("pseudospawners.override")) {
@@ -50,32 +51,30 @@ public class PlayerInteractEH implements Listener {
 								e.setCancelled(true);
 							}
 						} else {
-							PseudoSpawners.message.sendPluginError(p, Errors.NO_PERMISSION, "set a spawner type!");
+							PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.NO_PERMISSION, LanguageManager.getLanguage(p).getMessage("pseudospawners.permission_set_type"));
 						}
 					} else {
-						for (EntityType et : Config.spawnable) {
-							if (et.equals(entity)) {
-								if (p.hasPermission("pseudospawners.spawner." + entity.toString().toLowerCase())) {
-									if (p.hasPermission("pseudospawners.modify")) {
-										if (e.getHand() == EquipmentSlot.HAND) {
-											p.getInventory().setItemInMainHand(null);
-											CreatureSpawner s = (CreatureSpawner) b.getState();
-											s.setSpawnedType(entity);
-											s.update();
-											e.setCancelled(true);
-										} else if (e.getHand() == EquipmentSlot.OFF_HAND) {
-											p.getInventory().setItemInOffHand(null);
-											CreatureSpawner s = (CreatureSpawner) b.getState();
-											s.setSpawnedType(entity);
-											s.update();
-											e.setCancelled(true);
-										}
-									} else {
-										PseudoSpawners.message.sendPluginError(p, Errors.NO_PERMISSION, "set a spawner type!");
+						if (Config.spawnable.contains(entity)) {
+							if (p.hasPermission("pseudospawners.spawner." + entity.toString().toLowerCase())) {
+								if (p.hasPermission("pseudospawners.modify")) {
+									if (e.getHand() == EquipmentSlot.HAND) {
+										p.getInventory().setItemInMainHand(null);
+										CreatureSpawner s = (CreatureSpawner) b.getState();
+										s.setSpawnedType(entity);
+										s.update();
+										e.setCancelled(true);
+									} else if (e.getHand() == EquipmentSlot.OFF_HAND) {
+										p.getInventory().setItemInOffHand(null);
+										CreatureSpawner s = (CreatureSpawner) b.getState();
+										s.setSpawnedType(entity);
+										s.update();
+										e.setCancelled(true);
 									}
 								} else {
-									PseudoSpawners.message.sendPluginError(p, Errors.NO_PERMISSION, "set spawner to that type!");
+									PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.NO_PERMISSION, LanguageManager.getLanguage(p).getMessage("pseudospawners.permission_set_type"));
 								}
+							} else {
+								PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.NO_PERMISSION, LanguageManager.getLanguage(p).getMessage("pseudospawners.permission_set_type_specific", Config.getName(entity)));
 							}
 						}
 					}

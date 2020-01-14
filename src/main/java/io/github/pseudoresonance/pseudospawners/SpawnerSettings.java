@@ -8,7 +8,8 @@ import java.util.HashMap;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import io.github.pseudoresonance.pseudoapi.bukkit.Message;
+
+import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
 import io.github.pseudoresonance.pseudoapi.bukkit.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 
@@ -114,7 +115,7 @@ public class SpawnerSettings {
 					try {
 						mMaxNearbyEntities.invoke(data, maxNearbyEntities);
 					} catch (NumberFormatException e) {
-						Message.sendConsoleMessage("Spawner data error for: MaxNearbyEntities of: " + maxNearbyEntities);
+						PseudoSpawners.plugin.getChat().sendConsolePluginMessage(LanguageManager.getLanguage().getMessage("pseudospawners.error_spawner_data", "MaxNearbyEntities", maxNearbyEntities));
 					} catch (InvocationTargetException e) {
 						return e.getCause().getMessage();
 					}
@@ -124,7 +125,7 @@ public class SpawnerSettings {
 					try {
 						mRequiredPlayerRange.invoke(data, requiredPlayerRange);
 					} catch (NumberFormatException e) {
-						Message.sendConsoleMessage("Spawner data error for: RequiredPlayerRange of: " + requiredPlayerRange);
+						PseudoSpawners.plugin.getChat().sendConsolePluginMessage(LanguageManager.getLanguage().getMessage("pseudospawners.error_spawner_data", "RequiredPlayerRange", requiredPlayerRange));
 					} catch (InvocationTargetException e) {
 						return e.getCause().getMessage();
 					}
@@ -134,7 +135,7 @@ public class SpawnerSettings {
 					try {
 						mSpawnCount.invoke(data, spawnCount);
 					} catch (NumberFormatException e) {
-						Message.sendConsoleMessage("Spawner data error for: SpawnCount of: " + spawnCount);
+						PseudoSpawners.plugin.getChat().sendConsolePluginMessage(LanguageManager.getLanguage().getMessage("pseudospawners.error_spawner_data", "SpawnCount", spawnCount));
 					} catch (InvocationTargetException e) {
 						return e.getCause().getMessage();
 					}
@@ -144,7 +145,7 @@ public class SpawnerSettings {
 					try {
 						mMinSpawnDelay.invoke(data, minSpawnDelay);
 					} catch (NumberFormatException e) {
-						Message.sendConsoleMessage("Spawner data error for: MinSpawnDelay of: " + minSpawnDelay);
+						PseudoSpawners.plugin.getChat().sendConsolePluginMessage(LanguageManager.getLanguage().getMessage("pseudospawners.error_spawner_data", "MinSpawnDelay", minSpawnDelay));
 					} catch (InvocationTargetException e) {
 						return e.getCause().getMessage();
 					}
@@ -154,7 +155,7 @@ public class SpawnerSettings {
 					try {
 						mMaxSpawnDelay.invoke(data, maxSpawnDelay);
 					} catch (NumberFormatException e) {
-						Message.sendConsoleMessage("Spawner data error for: MaxSpawnDelay of: " + maxSpawnDelay);
+						PseudoSpawners.plugin.getChat().sendConsolePluginMessage(LanguageManager.getLanguage().getMessage("pseudospawners.error_spawner_data", "MaxSpawnDelay", maxSpawnDelay));
 					} catch (InvocationTargetException e) {
 						return e.getCause().getMessage();
 					}
@@ -164,7 +165,7 @@ public class SpawnerSettings {
 					try {
 						mSpawnRange.invoke(data, spawnRange);
 					} catch (NumberFormatException e) {
-						Message.sendConsoleMessage("Spawner data error for: SpawnRange of: " + spawnRange);
+						PseudoSpawners.plugin.getChat().sendConsolePluginMessage(LanguageManager.getLanguage().getMessage("pseudospawners.error_spawner_data", "SpawnRange", spawnRange));
 					} catch (InvocationTargetException e) {
 						return e.getCause().getMessage();
 					}

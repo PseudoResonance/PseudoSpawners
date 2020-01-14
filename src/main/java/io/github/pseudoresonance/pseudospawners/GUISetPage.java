@@ -7,84 +7,58 @@ import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import io.github.pseudoresonance.pseudoapi.bukkit.Message;
-import io.github.pseudoresonance.pseudoapi.bukkit.Message.Errors;
-import net.md_5.bungee.api.ChatColor;
+import io.github.pseudoresonance.pseudoapi.bukkit.Chat.Errors;
+import io.github.pseudoresonance.pseudoapi.bukkit.language.LanguageManager;
 
 public class GUISetPage {
-	
+
 	public static void setPage(Player p, int page) {
 		setPage(p, page, null);
 	}
-	
+
 	public static void setPage(Player p, int page, Inventory inv) {
 		List<EntityType> entities = Config.spawnable;
 		if (entities.size() >= 1) {
 			boolean newInv = false;
 			if (inv == null) {
 				newInv = true;
-				inv = Bukkit.createInventory(null, 54, Config.interfaceName);
+				inv = Bukkit.createInventory(new PseudoSpawnersHolder(), 54, LanguageManager.getLanguage(p).getMessage("pseudospawners.interface_name"));
 			} else {
 				inv.clear();
 			}
-			int total = (int) Math.ceil((double) entities.size() / 45);
-			if (page > total) {
-				Message.sendConsoleMessage(ChatColor.RED + "Programming Error! That page number is too high!");
-				return;
-			} else if (page <= 0) {
-				Message.sendConsoleMessage(ChatColor.RED + "Programming Error! Negative page number!");
-				return;
-			} else if (page == 1) {
-				PseudoSpawners.setPage(p.getName(), 1);
-				if (entities.size() >= 45) {
-					inv.setItem(Config.nextPageLocation, newStack(Config.nextPageMaterial, 1, "§1§f" + Config.nextPageName.replace("{page}", "2")));
-				}
-				for (int i = 0; i <= 44; i++) {
-					if (i < entities.size()) {
-						EntityType et = entities.get(i);
-						inv.setItem(i + 9, newEgg(et));
-					}
-				}
-			} else if (page == total) {
-				PseudoSpawners.setPage(p.getName(), total);
-				if (entities.size() >= 45) {
-					inv.setItem(Config.lastPageLocation, newStack(Config.lastPageMaterial, 1, "§2§f" + Config.lastPageName.replace("{page}", Integer.toString(page - 1))));
-				}
-				int loc = 8;
-				for (int i = (page - 1) * 45; i <= ((page - 1) * 45) + 44; i++) {
-					loc++;
-					if (i < entities.size()) {
-						EntityType et = entities.get(i);
-						inv.setItem(loc, newEgg(et));
-					}
-				}
-			} else {
-				PseudoSpawners.setPage(p.getName(), page);
-				if (entities.size() >= 45) {
-					inv.setItem(Config.lastPageLocation, newStack(Config.lastPageMaterial, 1, "§1§f" + Config.lastPageName.replace("{page}", Integer.toString(page - 1))));
-					inv.setItem(Config.nextPageLocation, newStack(Config.nextPageMaterial, 1, "§2§f" + Config.nextPageName.replace("{page}", Integer.toString(page + 1))));
-				}
-				int loc = 8;
-				for (int i = (page - 1) * 45; i <= ((page - 1) * 45) + 44; i++) {
-					loc++;
-					if (i < entities.size()) {
-						EntityType et = entities.get(i);
-						inv.setItem(loc, newEgg(et));
-					}
-				}
+			int total = (entities.size() - 1) / 45 + 1;
+			if (page > total || page <= 0) {
+				page = 1;
+			}
+			PseudoSpawners.setPage(p.getName(), page);
+			if (total > 1) {
+				if (page < total)
+					inv.setItem(Config.nextPageLocation, newStack(Config.nextPageMaterial, 1, "§1§f" + LanguageManager.getLanguage(p).getMessage("pseudospawners.interface_next_page_name", page + 1)));
+				if (page > 1)
+					inv.setItem(Config.lastPageLocation, newStack(Config.lastPageMaterial, 1, "§2§f" + LanguageManager.getLanguage(p).getMessage("pseudospawners.interface_last_page_name", page - 1)));
+			}
+			int invIndex = 8;
+			for (int i = (page - 1) * 45; i < page * 45; i++) {
+				invIndex++;
+				if (i < entities.size()) {
+					EntityType et = entities.get(i);
+					inv.setItem(invIndex, newEgg(et));
+				} else
+					break;
 			}
 			if (newInv)
 				p.openInventory(inv);
 			else
 				p.updateInventory();
 		} else {
-			PseudoSpawners.message.sendPluginError(p, Errors.CUSTOM, "There are no entities enabled on the server!");
+			PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_no_entities"));
 		}
 	}
-	
+
 	protected static ItemStack newEgg(EntityType et) {
 		if (!et.isSpawnable())
 			throw new IllegalArgumentException("Entity cannot be spawned!");
@@ -100,13 +74,20 @@ public class GUISetPage {
 		is.setItemMeta(im);
 		return is;
 	}
-	
+
 	protected static ItemStack newStack(Material material, int quantity, String name) {
 		ItemStack is = new ItemStack(material, quantity);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(name);
 		is.setItemMeta(im);
 		return is;
+	}
+	
+	public static class PseudoSpawnersHolder implements InventoryHolder {  
+	    @Override
+	    public Inventory getInventory() {
+	        return null;
+	    }
 	}
 
 }

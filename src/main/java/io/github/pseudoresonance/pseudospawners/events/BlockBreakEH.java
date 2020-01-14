@@ -19,7 +19,7 @@ import io.github.pseudoresonance.pseudospawners.Config;
 import io.github.pseudoresonance.pseudospawners.SpawnerSettings;
 
 public class BlockBreakEH implements Listener {
-	
+
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent e) {
 		ItemStack is = e.getPlayer().getInventory().getItemInMainHand();
@@ -43,16 +43,14 @@ public class BlockBreakEH implements Listener {
 							b.getWorld().dropItem(b.getLocation(), spawner);
 							e.setExpToDrop(0);
 						} else {
-							for (EntityType et : Config.spawnable) {
-								if (et == entity) {
-									if (p.hasPermission("pseudospawners.spawner." + entity.toString().toLowerCase())) {
-										ArrayList<String> lore = SpawnerSettings.getSettings(b);
-										String name = Config.getName(entity);
-										String full = Config.color + name + " Spawner";
-										ItemStack spawner = newSpawner(full, lore);
-										b.getWorld().dropItem(b.getLocation(), spawner);
-										e.setExpToDrop(0);
-									}
+							if (Config.spawnable.contains(entity)) {
+								if (p.hasPermission("pseudospawners.spawner." + entity.toString().toLowerCase())) {
+									ArrayList<String> lore = SpawnerSettings.getSettings(b);
+									String name = Config.getName(entity);
+									String full = Config.color + name + " Spawner";
+									ItemStack spawner = newSpawner(full, lore);
+									b.getWorld().dropItem(b.getLocation(), spawner);
+									e.setExpToDrop(0);
 								}
 							}
 						}
@@ -61,7 +59,7 @@ public class BlockBreakEH implements Listener {
 			}
 		}
 	}
-	
+
 	private static ItemStack newSpawner(String name, ArrayList<String> lore) {
 		ItemStack is = new ItemStack(Material.SPAWNER, 1);
 		ItemMeta im = is.getItemMeta();
