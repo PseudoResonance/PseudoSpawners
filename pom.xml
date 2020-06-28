@@ -6,7 +6,7 @@
 	<version>${revision}</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<revision>2.2.1</revision>
+		<revision>2.2.2</revision>
 		<lowerName>pseudospawners</lowerName>
 	</properties>
 	<build>

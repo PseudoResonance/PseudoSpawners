@@ -37,9 +37,9 @@ public class GUISetPage {
 			PseudoSpawners.setPage(p.getName(), page);
 			if (total > 1) {
 				if (page < total)
-					inv.setItem(Config.nextPageLocation, newStack(Config.nextPageMaterial, 1, "§1§f" + LanguageManager.getLanguage(p).getMessage("pseudospawners.interface_next_page_name", page + 1)));
+					inv.setItem(Config.nextPageLocation, newStack(Config.nextPageMaterial, 1, LanguageManager.getLanguage(p).getMessage("pseudospawners.interface_next_page_name", page + 1)));
 				if (page > 1)
-					inv.setItem(Config.lastPageLocation, newStack(Config.lastPageMaterial, 1, "§2§f" + LanguageManager.getLanguage(p).getMessage("pseudospawners.interface_last_page_name", page - 1)));
+					inv.setItem(Config.lastPageLocation, newStack(Config.lastPageMaterial, 1, LanguageManager.getLanguage(p).getMessage("pseudospawners.interface_last_page_name", page - 1)));
 			}
 			int invIndex = 8;
 			for (int i = (page - 1) * 45; i < page * 45; i++) {

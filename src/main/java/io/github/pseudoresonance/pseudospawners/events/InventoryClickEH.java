@@ -82,17 +82,14 @@ public class InventoryClickEH implements Listener {
 							if (im.hasDisplayName()) {
 								String name = im.getDisplayName();
 								int page = PseudoSpawners.getPage(p.getName());
-								switch (name.substring(0, 4)) {
-								case "§1§f":
+								int slot = e.getSlot();
+								if (slot == Config.nextPageLocation) {
 									GUISetPage.setPage(p, page + 1, i);
 									e.setCancelled(true);
-									break;
-								case "§2§f":
+								} else if (slot == Config.lastPageLocation) {
 									GUISetPage.setPage(p, page - 1, i);
 									e.setCancelled(true);
-									break;
-								}
-								if (isEgg(is)) {
+								} else if (isEgg(is)) {
 									String entityName = ChatColor.stripColor(name);
 									EntityType entity = Config.getEntity(entityName);
 									if (Config.spawnable.contains(entity)) {
