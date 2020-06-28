@@ -46,6 +46,7 @@ public class GetNMSName {
 						}
 					}
 					Method trans = Arrays.stream(locale.getClass().getMethods()).filter(m -> m.getReturnType().equals(String.class)).filter(m -> m.getParameterCount() == 1).filter(m -> m.getParameters()[0].getType().equals(String.class)).collect(Collectors.toList()).get(0);
+					trans.setAccessible(true);
 					for (Field f : mobFields) {
 						for (EntityType et : EntityType.values()) {
 							String entityName = et.getKey().getKey();

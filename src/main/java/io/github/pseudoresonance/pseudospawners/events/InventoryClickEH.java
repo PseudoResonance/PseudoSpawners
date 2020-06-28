@@ -66,9 +66,11 @@ public class InventoryClickEH implements Listener {
 		Inventory i = e.getView().getTopInventory();
 		Player p = (Player) e.getWhoClicked();
 		if (i instanceof AnvilInventory) {
-			if (e.getCurrentItem().getType() == Material.SPAWNER) {
-				e.setCancelled(true);
-				PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_spawner_anvil"));
+			if (e.getCurrentItem() != null) {
+				if (e.getCurrentItem().getType() == Material.SPAWNER) {
+					e.setCancelled(true);
+					PseudoSpawners.plugin.getChat().sendPluginError(p, Errors.CUSTOM, LanguageManager.getLanguage(p).getMessage("pseudospawners.error_spawner_anvil"));
+				}
 			}
 		} else {
 			if (i != null) {
