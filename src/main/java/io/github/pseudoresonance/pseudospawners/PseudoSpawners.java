@@ -74,7 +74,7 @@ public class PseudoSpawners extends PseudoPlugin {
 	}
 
 	private void initializeMetrics() {
-		metrics = new Metrics(this);
+		metrics = new Metrics(this, 6261);
 	}
 	
 	public static Config getConfigOptions() {

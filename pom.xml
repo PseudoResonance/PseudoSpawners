@@ -6,7 +6,7 @@
 	<version>${revision}</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<revision>2.2.2</revision>
+		<revision>2.2.3</revision>
 		<lowerName>pseudospawners</lowerName>
 	</properties>
 	<build>
@@ -151,19 +151,19 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.16.1-R0.1-SNAPSHOT</version>
+			<version>1.16.4-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.github.pseudoresonance</groupId>
 			<artifactId>PseudoAPI</artifactId>
-			<version>5.2.10</version>
+			<version>5.2.12</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
-			<version>1.5</version>
+			<version>1.7</version>
 		</dependency>
 	</dependencies>
 </project>
