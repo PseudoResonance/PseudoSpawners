@@ -12,6 +12,8 @@ pseudospawners:
   interface_name: "&c&lPseudoSpawners"
   interface_last_page_name: "Page {$1$}"
   interface_next_page_name: "Page {$1$}"
+  loading_minecraft_version: "Loading in Minecraft {$1$}"
+  error_getting_minecraft_version: "Could not get Minecraft version from {$1$}! Attempting load anyways as Minecraft 1.17 or later!"
   error_no_entities: "There are no entities enabled on the server!"
   error_unable_get_name: "Unable to fetch mob names from server locale!"
   error_invalid_spawner: "That spawner is invalid!"

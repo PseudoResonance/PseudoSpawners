@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 
 import io.github.pseudoresonance.pseudoapi.bukkit.Chat.Errors;
@@ -24,9 +25,33 @@ public class GetNMSName {
 	public static HashMap<String, EntityType> namesReverse = new HashMap<String, EntityType>();
 
 	public static void getNames() {
+		int minecraftVersion = 0;
+		String bukkitPackageName = "";
+		String bukkitVersion = "";
 		try {
-			Class<?> localeClass = Class.forName("net.minecraft.server." + Utils.getBukkitVersion() + ".LocaleLanguage");
-			Class<?> entityTypes = Class.forName("net.minecraft.server." + Utils.getBukkitVersion() + ".EntityTypes");
+			bukkitPackageName = Bukkit.getServer().getClass().getPackage().getName();
+			bukkitVersion = bukkitPackageName.substring(bukkitPackageName.lastIndexOf(".") + 1);
+			minecraftVersion = Integer.valueOf(bukkitVersion.split("_")[1]);
+			PseudoSpawners.plugin.getChat().sendConsolePluginMessage(LanguageManager.getLanguage().getMessage("pseudospawners.loading_minecraft_version", "1." + minecraftVersion));
+		} catch (IndexOutOfBoundsException | NumberFormatException e) {
+			PseudoSpawners.plugin.getChat().sendConsolePluginError(Errors.CUSTOM, LanguageManager.getLanguage().getMessage("pseudospawners.error_getting_minecraft_version", bukkitPackageName));
+			minecraftVersion = 17;
+		}
+		try {
+			Class<?> localeClass = null;
+			Class<?> entityTypes = null;
+			Field idField = null;
+			if (minecraftVersion >= 17) {
+				localeClass = Class.forName("net.minecraft.locale.LocaleLanguage");
+				entityTypes = Class.forName("net.minecraft.world.entity.EntityTypes");
+			} else {
+				localeClass = Class.forName("net.minecraft.server." + Utils.getBukkitVersion() + ".LocaleLanguage");
+				entityTypes = Class.forName("net.minecraft.server." + Utils.getBukkitVersion() + ".EntityTypes");
+			}
+			try {
+				idField = entityTypes.getDeclaredField("id");
+				idField.setAccessible(true);
+			} catch (NoSuchFieldException i) {}
 			Field localeFields = null;
 			for (Field f : localeClass.getDeclaredFields()) {
 				if (f.getType().equals(localeClass)) {
@@ -48,17 +73,21 @@ public class GetNMSName {
 					Method trans = Arrays.stream(locale.getClass().getMethods()).filter(m -> m.getReturnType().equals(String.class)).filter(m -> m.getParameterCount() == 1).filter(m -> m.getParameters()[0].getType().equals(String.class)).collect(Collectors.toList()).get(0);
 					trans.setAccessible(true);
 					for (Field f : mobFields) {
+						String minecraftName = idField != null ? (String) idField.get(f.get(null)) : f.getName();
+						if (minecraftName == null)
+							continue;
 						for (EntityType et : EntityType.values()) {
-							String entityName = et.getKey().getKey();
-							if (entityName == null || f.getName() == null)
-								continue;
-							if (entityName.equalsIgnoreCase(f.getName())) {
-								String friendlyName = (String) trans.invoke(locale, "entity.minecraft." + f.getName().toLowerCase());
-								if (!friendlyName.startsWith("entity.minecraft.")) {
-									names.put(et, friendlyName);
+							try {
+								String bukkitName = et.getKey().getKey();
+								if (minecraftName.equalsIgnoreCase(bukkitName)) {
+									String friendlyName = (String) trans.invoke(locale, "entity.minecraft." + minecraftName.toLowerCase());
+									if (!friendlyName.startsWith("entity.minecraft.")) {
+										names.put(et, friendlyName);
+									}
+									break;
 								}
-								break;
-							}
+							} catch (IllegalArgumentException ignore) {
+							} // Filter out invalid entities
 						}
 					}
 					updateNames();
@@ -80,7 +109,8 @@ public class GetNMSName {
 										nameMap.put(id, friendlyName);
 									}
 								}
-							} catch (IndexOutOfBoundsException e) {}
+							} catch (IndexOutOfBoundsException e) {
+							}
 						}
 					}
 					updateNamesLegacy();
@@ -112,7 +142,7 @@ public class GetNMSName {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static void updateNames() {
 		HashMap<String, EntityType> nrm = new HashMap<String, EntityType>();
 		for (EntityType et : names.keySet()) {
@@ -121,7 +151,7 @@ public class GetNMSName {
 		}
 		namesReverse = nrm;
 	}
-	
+
 	private static void updateNamesLegacy() {
 		HashMap<EntityType, String> nm = new HashMap<EntityType, String>();
 		HashMap<String, EntityType> nrm = new HashMap<String, EntityType>();
@@ -135,11 +165,11 @@ public class GetNMSName {
 		names = nm;
 		namesReverse = nrm;
 	}
-	
+
 	public static HashMap<EntityType, String> getNameMap() {
 		return names;
 	}
-	
+
 	public static HashMap<String, EntityType> getNameMapReverse() {
 		return namesReverse;
 	}

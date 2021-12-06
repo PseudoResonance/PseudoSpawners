@@ -41,9 +41,11 @@ Blacklist:
   - experience_orb
   - fireball
   - giant
+  - glow_item_frame
   - item_frame
   - leash_hitch
   - llama_spit
+  - marker
   - minecart
   - minecart_chest
   - minecart_command
